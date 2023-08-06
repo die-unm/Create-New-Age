@@ -3,19 +3,15 @@ package org.antarcticgardens.newage;
 import com.simibubi.create.content.fluids.tank.BoilerHeaters;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeSerializer;
 import com.simibubi.create.foundation.data.CreateRegistrate;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
-import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 import org.antarcticgardens.newage.content.energiser.EnergisingRecipe;
 import org.antarcticgardens.newage.tools.RecipeTool;
 import org.slf4j.Logger;
@@ -25,18 +21,29 @@ import java.io.IOException;
 
 import static org.antarcticgardens.newage.content.heat.heater.HeaterBlock.STRENGTH;
 
-public class CreateNewAge implements ModInitializer {
+@Mod("create_new_age")
+public class CreateNewAge {
     public static final Logger LOGGER = LoggerFactory.getLogger("create_new_age");
 
 	public static final String MOD_ID = "create_new_age";
 
-	public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(MOD_ID);
+	public static final CreateRegistrate BASE_REGISTRATE = CreateRegistrate.create(MOD_ID);
+
+	public static final RegistryObject<CreativeModeTab> tab = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MOD_ID).register("create_new_age_tab",
+			() -> CreativeModeTab.builder()
+					.title(Component.translatable("item_group." + MOD_ID + ".tab"))
+					.icon(() -> NewAgeBlocks.ENERGISER_T1.asStack())
+					.build()
+			);
+
+	public static final CreateRegistrate REGISTRATE = BASE_REGISTRATE.useCreativeTab(tab);
+
 
 	public static final ResourceKey<CreativeModeTab> CREATIVE_TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB,
 			new ResourceLocation(MOD_ID, "tab"));
 
-	@Override
-	public void onInitialize() {
+	public CreateNewAge() {
+		var modBus = FMLJavaModLoadingContext.get().getModEventBus();
 		LOGGER.info("Hello 1.20.1 Create!");
 
 		try {
@@ -45,38 +52,17 @@ public class CreateNewAge implements ModInitializer {
 			LOGGER.error("Failed to load config.", e);
 		}
 
-		ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> {
-			try {
-				Configurations.load();
-			} catch (IOException e) {
-				LOGGER.error("Failed to reload config.", e);
-			}
-		});
-
-
-		registerCreativeTab();
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(CreateNewAgeClient::onInitializeClient);
 
 		NewAgeBlocks.load();
 		NewAgeBlockEntityTypes.load();
 		NewAgeItems.load();
 
-		REGISTRATE.register();
+		REGISTRATE.registerEventListeners(modBus);
 
 		BoilerHeaters.registerHeater(NewAgeBlocks.HEATER.get(), (level, pos, state) -> state.getValue(STRENGTH) - 1);
 
 		EnergisingRecipe.type = RecipeTool.createIRecipeTypeInfo("energising", new ProcessingRecipeSerializer<>(EnergisingRecipe::new));
 
-		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Decoration.UNDERGROUND_ORES, ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation("create_new_age","ore_thorium")));
-		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Decoration.UNDERGROUND_ORES, ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation("create_new_age","magnetite")));
-
-	}
-
-	private void registerCreativeTab() {
-		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,
-				new ResourceLocation(MOD_ID, "tab"),
-				FabricItemGroup.builder()
-						.icon(NewAgeBlocks.ENERGISER_T1::asStack)
-						.title(Component.translatable("tab." + MOD_ID + ".tab"))
-						.build());
 	}
 }

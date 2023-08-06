@@ -1,6 +1,5 @@
 package org.antarcticgardens.newage.compat.rei;
 
-import com.simibubi.create.compat.rei.ItemIcon;
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.DisplayRenderer;
@@ -86,7 +85,7 @@ public class NewAgeReiPlugin implements REIClientPlugin {
 
             @Override
             public Renderer getIcon() {
-                return new ItemIcon(NewAgeBlocks.ENERGISER_T2::asStack);
+                return EntryStacks.of(NewAgeBlocks.ENERGISER_T2.asStack());
             }
         };
 

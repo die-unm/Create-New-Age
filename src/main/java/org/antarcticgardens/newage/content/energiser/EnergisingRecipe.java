@@ -1,11 +1,15 @@
 package org.antarcticgardens.newage.content.energiser;
 
 import com.google.gson.JsonObject;
-import com.simibubi.create.compat.recipeViewerCommon.SequencedAssemblySubCategoryType;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.simibubi.create.compat.jei.category.sequencedAssembly.SequencedAssemblySubCategory;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
 import com.simibubi.create.content.processing.sequenced.IAssemblyRecipe;
+import com.simibubi.create.content.processing.sequenced.SequencedRecipe;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
@@ -14,21 +18,35 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import org.antarcticgardens.newage.NewAgeBlocks;
-import org.antarcticgardens.newage.compat.emi.EmiEnergisingSubcategory;
-import org.antarcticgardens.newage.compat.jei.JeiEnergisingSubcategory;
-import org.antarcticgardens.newage.compat.rei.ReiEnergiserSubCategory;
+import org.antarcticgardens.newage.compat.NotAnimatedEnergiser;
+import org.antarcticgardens.newage.tools.StringFormattingTool;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAssemblyRecipe {
 
-    public static SequencedAssemblySubCategoryType subCategoryType = new SequencedAssemblySubCategoryType(
-            () -> JeiEnergisingSubcategory::new,
-            () -> ReiEnergiserSubCategory::new,
-            () -> EmiEnergisingSubcategory::new
-    ); // TODO
+    public static SequencedAssemblySubCategory subCategoryType = new SequencedAssemblySubCategory(52) {
+        private NotAnimatedEnergiser energiser;
+
+        {
+            energiser = new NotAnimatedEnergiser();
+        }
+
+        @Override
+        public void draw(SequencedRecipe<?> recipe, GuiGraphics graphics, double mouseX, double mouseY, int index) {
+            PoseStack ms = graphics.pose();
+            energiser.offset = index;
+            ms.pushPose();
+            ms.translate(-5, 50, 0);
+            ms.scale(.6f, .6f, .6f);
+            energiser.draw(graphics, getWidth() / 2, 0);
+            ms.popPose();
+            graphics.drawString(Minecraft.getInstance().font, Component.literal(StringFormattingTool.formatLong(((EnergisingRecipe)recipe.getAsAssemblyRecipe()).energyNeeded) + " ⚡"), 0, 20, 0x1166ff, false);
+        }
+    }; // TODO
 
     public static IRecipeTypeInfo type;
 
@@ -81,9 +99,10 @@ public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAs
     public void addAssemblyIngredients(List<Ingredient> list) {}
 
     @Override
-    public SequencedAssemblySubCategoryType getJEISubCategory() {
-        return subCategoryType;
+    public Supplier<Supplier<SequencedAssemblySubCategory>> getJEISubCategory() {
+        return () -> () -> subCategoryType;
     }
+
 
     @Override
     public boolean matches(Container container, @NotNull Level level) {

@@ -1,5 +1,5 @@
 plugins {
-	id "dev.architectury.loom" version "1.1-SNAPSHOT"
+	id "dev.architectury.loom" version "1.2-SNAPSHOT"
 	id "maven-publish"
 }
 
@@ -27,6 +27,13 @@ repositories {
 		name = "Resourceful Bees Maven"
 		url = "https://maven.resourcefulbees.com/repository/maven-public/"
 	}
+	maven {
+		url "https://squiddev.cc/maven/"
+		content {
+			includeGroup("cc.tweaked")
+			includeModule("org.squiddev", "Cobalt")
+		}
+	}
 }
 
 loom {
@@ -35,39 +42,42 @@ loom {
 			sourceSet sourceSets.main
 		}
 	}
+	forge {
+		mixinConfigs = [
+				"create_new_age.mixins.json"
+		]
+	}
 }
 
 dependencies {
 	minecraft("com.mojang:minecraft:${minecraft_version}")
-	mappings(loom.layered {
-		it.mappings("org.quiltmc:quilt-mappings:${minecraft_version}+build.${qm_version}:intermediary-v2")
-		it.parchment("org.parchmentmc.data:parchment-${minecraft_version}:${parchment_version}@zip")
-		it.officialMojangMappings { nameSyntheticMembers = false }
-	})
+	mappings loom.officialMojangMappings()
 
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	forge "net.minecraftforge:forge:${project.forge_version}"
 
 	// Oh great create
-	modImplementation("com.simibubi.create:create-fabric-${minecraft_version}:${create_version}")
+	modImplementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
 
 	// Botarium for energy API
 	modImplementation "earth.terrarium:botarium-common-${minecraft_version}:${botarium_version}"
-	modApi("earth.terrarium:botarium-fabric-${minecraft_version}:${botarium_version}")
+	modApi("earth.terrarium:botarium-forge-${minecraft_version}:${botarium_version}")
+
+	// more stuff
+	modImplementation("com.tterrag.registrate:Registrate:${registrate_version}")
+	modImplementation("com.jozufozu.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}")
 
 	// For testing electricity stuff, don't actually use classes provided by it
 //	 modImplementation("earth.terrarium.adastra:ad_astra-fabric-$minecraft_version:$ad_astra_version")
 
-	modCompileOnly("dev.emi:emi-fabric:${emi_version}");
-	modCompileOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
-	modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}");
+	modCompileOnly("dev.emi:emi-forge:${emi_version}");
+	modCompileOnly("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
+	modCompileOnly("me.shedaniel:RoughlyEnoughItems-forge:${rei_version}");
 
 
 	switch (recipe_viewer.toLowerCase(Locale.ROOT)) {
-		case "jei": modLocalRuntime("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}"); break
-		case "rei": modLocalRuntime("me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}"); break
-		case "emi": modLocalRuntime("dev.emi:emi-fabric:${emi_version}"); break
+		case "jei": modLocalRuntime("mezz.jei:jei-${minecraft_version}-forge:${jei_version}"); break
+		case "rei": modLocalRuntime("me.shedaniel:RoughlyEnoughItems-forge:${rei_version}"); break
+		case "emi": modLocalRuntime("dev.emi:emi-forge:${emi_version}"); break
 		case "disabled": break
 		default: println("Unknown recipe viewer specified: ${recipe_viewer}. Must be JEI, REI, EMI, or disabled.")
 	}
@@ -76,7 +86,7 @@ dependencies {
 processResources {
 	inputs.property "version", project.version
 
-	filesMatching("fabric.mod.json") {
+	filesMatching("META-INF/mods.toml") {
 		expand "version": project.version
 	}
 }
@@ -99,6 +109,17 @@ jar {
 	from("LICENSE") {
 		rename { "${it}_${project.base.archivesName.get()}"}
 	}
+    manifest {
+        attributes([
+                "Specification-Title"     : "create-new-age",
+                "Specification-Vendor"    : "AnatarcticGardens",
+                "Specification-Version"   : "1",
+                "Implementation-Title"    : "Create: New Age",
+                "Implementation-Version"  : "1",
+                "Implementation-Vendor"   : "AnatarcticGardens",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
 }
 
 // configure the maven publication

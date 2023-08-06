@@ -1,0 +1,32 @@
+modLoader="javafml"
+loaderVersion="[46,)"
+
+license="All Rights Reserved"
+issueTrackerURL="https://github.com/MinecraftForge/MinecraftForge/issues"
+showAsResourcePack=false
+
+[[mods]]
+modId="create_new_age"
+version="1.0.0.0"
+displayName="Create: New Age"
+logoFile="logo.png"
+credits="I'd like to thank my mother and father."
+authors="Author"
+description='''
+
+  '''
+displayTest="MATCH_VERSION"
+
+[[dependencies.create_new_age]]
+modId="forge"
+mandatory=true
+versionRange="[46,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.create_new_age]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20]"
+ordering="NONE"
+side="BOTH"

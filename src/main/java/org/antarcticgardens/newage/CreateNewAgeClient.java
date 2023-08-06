@@ -4,15 +4,16 @@ import com.simibubi.create.foundation.item.KineticStats;
 import com.simibubi.create.foundation.item.TooltipModifier;
 import com.simibubi.create.foundation.ponder.PonderRegistrationHelper;
 import com.tterrag.registrate.util.entry.BlockEntry;
-import net.fabricmc.api.ClientModInitializer;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.antarcticgardens.newage.content.energiser.EnergiserPonder;
 import org.antarcticgardens.newage.content.heat.HeatingPonder;
 import org.antarcticgardens.newage.content.heat.heater.HeaterPonder;
 import org.antarcticgardens.newage.content.reactor.ReactorPonder;
 
-public class CreateNewAgeClient implements ClientModInitializer {
-    @Override
-    public void onInitializeClient() {
+public class CreateNewAgeClient {
+
+
+    public static void onInitializeClient(final FMLClientSetupEvent event) {
 
         // ponders
         PonderRegistrationHelper helper = new PonderRegistrationHelper(CreateNewAge.MOD_ID);
@@ -42,7 +43,7 @@ public class CreateNewAgeClient implements ClientModInitializer {
         addToolTipModifier(NewAgeBlocks.GENERATOR_COIL);
     }
 
-    public void addToolTipModifier(BlockEntry<?> entry) {
+    public static void addToolTipModifier(BlockEntry<?> entry) {
         TooltipModifier.REGISTRY.register(entry.asItem(), KineticStats.create(entry.asItem()));
 
     }
