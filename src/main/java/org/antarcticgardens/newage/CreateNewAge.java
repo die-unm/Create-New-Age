@@ -3,12 +3,14 @@ package org.antarcticgardens.newage;
 import com.simibubi.create.content.fluids.tank.BoilerHeaters;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeSerializer;
 import com.simibubi.create.foundation.data.CreateRegistrate;
+import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
@@ -41,6 +43,7 @@ public class CreateNewAge {
 
 	public static final ResourceKey<CreativeModeTab> CREATIVE_TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB,
 			new ResourceLocation(MOD_ID, "tab"));
+	public static IRecipeTypeInfo type;
 
 	public CreateNewAge() {
 		var modBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -52,17 +55,27 @@ public class CreateNewAge {
 			LOGGER.error("Failed to load config.", e);
 		}
 
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(CreateNewAgeClient::onInitializeClient);
+		REGISTRATE.registerEventListeners(modBus);
 
 		NewAgeBlocks.load();
 		NewAgeBlockEntityTypes.load();
 		NewAgeItems.load();
 
-		REGISTRATE.registerEventListeners(modBus);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(CreateNewAgeClient::onInitializeClient);
 
-		BoilerHeaters.registerHeater(NewAgeBlocks.HEATER.get(), (level, pos, state) -> state.getValue(STRENGTH) - 1);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::generalSetup);
 
-		EnergisingRecipe.type = RecipeTool.createIRecipeTypeInfo("energising", new ProcessingRecipeSerializer<>(EnergisingRecipe::new));
-
+		try {
+			type = RecipeTool.createIRecipeTypeInfo("energising", new ProcessingRecipeSerializer<>(EnergisingRecipe::new));
+		} catch (Exception e) {
+			LOGGER.error("Exceiption", e);
+		}
 	}
+
+	private void generalSetup(final FMLCommonSetupEvent event) {
+
+		event.enqueueWork(() -> BoilerHeaters.registerHeater(NewAgeBlocks.HEATER.get(), (level, pos, state) -> state.getValue(STRENGTH) - 1));
+	}
+
+
 }

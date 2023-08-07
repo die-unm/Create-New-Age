@@ -7,7 +7,6 @@ import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
 import com.simibubi.create.content.processing.sequenced.IAssemblyRecipe;
 import com.simibubi.create.content.processing.sequenced.SequencedRecipe;
-import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.FriendlyByteBuf;
@@ -17,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
+import org.antarcticgardens.newage.CreateNewAge;
 import org.antarcticgardens.newage.NewAgeBlocks;
 import org.antarcticgardens.newage.compat.NotAnimatedEnergiser;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
@@ -48,11 +48,9 @@ public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAs
         }
     }; // TODO
 
-    public static IRecipeTypeInfo type;
-
     public int energyNeeded;
     public EnergisingRecipe(ProcessingRecipeBuilder.ProcessingRecipeParams params) {
-        super(type, params);
+        super(CreateNewAge.type, params);
     }
 
     @Override
