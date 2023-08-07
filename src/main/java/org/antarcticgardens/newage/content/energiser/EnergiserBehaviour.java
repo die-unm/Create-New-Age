@@ -9,7 +9,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
-import org.antarcticgardens.newage.CreateNewAge;
 import org.joml.Math;
 
 import java.util.List;
@@ -31,7 +30,7 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
             return null;
         }
         
-        List<EnergisingRecipe> recipes = be.getLevel().getRecipeManager().getAllRecipesFor(CreateNewAge.type.getType());
+        List<EnergisingRecipe> recipes = be.getLevel().getRecipeManager().getAllRecipesFor(EnergisingRecipe.type.getType());
 
         for (EnergisingRecipe recipe : recipes) {
             if (recipe.test(stack)) {

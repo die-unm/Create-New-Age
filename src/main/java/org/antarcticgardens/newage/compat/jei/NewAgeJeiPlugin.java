@@ -35,7 +35,7 @@ public class NewAgeJeiPlugin implements IModPlugin {
     public void registerRecipes(IRecipeRegistration registration) {
 
         registration.addRecipes(energisingType,
-                Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(CreateNewAge.type.getType()));
+                Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(EnergisingRecipe.type.getType()));
     }
 
     @Override

@@ -3,7 +3,6 @@ package org.antarcticgardens.newage;
 import com.simibubi.create.content.fluids.tank.BoilerHeaters;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeSerializer;
 import com.simibubi.create.foundation.data.CreateRegistrate;
-import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -43,7 +42,6 @@ public class CreateNewAge {
 
 	public static final ResourceKey<CreativeModeTab> CREATIVE_TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB,
 			new ResourceLocation(MOD_ID, "tab"));
-	public static IRecipeTypeInfo type;
 
 	public CreateNewAge() {
 		var modBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -66,7 +64,7 @@ public class CreateNewAge {
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::generalSetup);
 
 		try {
-			type = RecipeTool.createIRecipeTypeInfo("energising", new ProcessingRecipeSerializer<>(EnergisingRecipe::new));
+			EnergisingRecipe.type = RecipeTool.createIRecipeTypeInfo("energising", new ProcessingRecipeSerializer<>(EnergisingRecipe::new));
 		} catch (Exception e) {
 			LOGGER.error("Exceiption", e);
 		}
