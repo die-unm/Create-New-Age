@@ -14,7 +14,7 @@ import com.simibubi.create.foundation.utility.Lang;
 import com.simibubi.create.foundation.utility.VecHelper;
 import com.tterrag.registrate.builders.BlockEntityBuilder;
 import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
-import earth.terrarium.botarium.common.energy.impl.SimpleEnergyContainer;
+import earth.terrarium.botarium.common.energy.impl.InsertOnlyEnergyContainer;
 import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -33,6 +33,7 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
 
     public boolean needsPower = false;
     public WrappedBlockEnergyContainer energy;
+    private final long maxCapacity;
     private final float stressImpact;
     private final float maxSpeed;
     public MotorScrollValueBehaviour speedBehavior;
@@ -47,7 +48,7 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
 
     public MotorBlockEntity(BlockEntityType<?> arg, BlockPos arg2, BlockState arg3, long maxCapacity, float stressImpact, float maxSpeed) {
         super(arg, arg2, arg3);
-        energy = new WrappedBlockEnergyContainer(this, new SimpleEnergyContainer(maxCapacity));
+        this.maxCapacity = maxCapacity;
         this.stressImpact = stressImpact;
         this.maxSpeed = maxSpeed;
         speedBehavior.between((int) -maxSpeed, (int) maxSpeed);
@@ -233,6 +234,6 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
 
     @Override
     public WrappedBlockEnergyContainer getEnergyStorage() {
-        return energy;
+        return energy == null ? energy = new WrappedBlockEnergyContainer(this, new InsertOnlyEnergyContainer(maxCapacity)) : energy;
     }
 }

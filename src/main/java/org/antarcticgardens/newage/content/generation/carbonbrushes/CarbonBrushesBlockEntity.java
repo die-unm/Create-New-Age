@@ -22,14 +22,12 @@ import org.antarcticgardens.newage.tools.StringFormattingTool;
 import java.util.List;
 
 public class CarbonBrushesBlockEntity extends KineticBlockEntity implements BotariumEnergyBlock<WrappedBlockEnergyContainer>, IHaveGoggleInformation {
-    private final WrappedBlockEnergyContainer energyContainer;
+    private WrappedBlockEnergyContainer energyContainer;
 
     private int lastOutput = 0;
 
     public CarbonBrushesBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-
-        energyContainer = new WrappedBlockEnergyContainer(this, new ExtractOnlyEnergyContainer(25000));
 
         setLazyTickRate(20);
     }
@@ -122,6 +120,6 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
 
     @Override
     public WrappedBlockEnergyContainer getEnergyStorage() {
-        return energyContainer;
+        return energyContainer == null ? energyContainer = new WrappedBlockEnergyContainer(this, new ExtractOnlyEnergyContainer(25000)) : energyContainer;
     }
 }

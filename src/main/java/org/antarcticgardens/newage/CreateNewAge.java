@@ -36,7 +36,7 @@ public class CreateNewAge {
 					.title(Component.translatable("item_group." + MOD_ID + ".tab"))
 					.icon(() -> NewAgeBlocks.ENERGISER_T1.asStack())
 					.build()
-			);
+			); // TODO: make tab show up
 
 	public static final CreateRegistrate REGISTRATE = BASE_REGISTRATE.useCreativeTab(tab);
 
@@ -57,6 +57,7 @@ public class CreateNewAge {
 
 		REGISTRATE.registerEventListeners(modBus);
 
+		// TODO: make sure that energy containers work.
 		NewAgeBlocks.load();
 		NewAgeBlockEntityTypes.load();
 		NewAgeItems.load();
