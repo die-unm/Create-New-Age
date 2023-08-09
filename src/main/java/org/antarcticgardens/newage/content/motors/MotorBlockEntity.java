@@ -14,7 +14,6 @@ import com.simibubi.create.foundation.utility.Lang;
 import com.simibubi.create.foundation.utility.VecHelper;
 import com.tterrag.registrate.builders.BlockEntityBuilder;
 import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
-import earth.terrarium.botarium.common.energy.impl.SimpleEnergyContainer;
 import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -25,6 +24,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.antarcticgardens.newage.Configurations;
+import org.antarcticgardens.newage.SimpleInsertOnlyMutableContainer;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 
 import java.util.List;
@@ -45,12 +45,17 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
 
     private float speed = 0;
     private float stress = 0;
+    private SimpleInsertOnlyMutableContainer mut;
 
     public MotorBlockEntity(BlockEntityType<?> arg, BlockPos arg2, BlockState arg3, long maxCapacity, float stressImpact, float maxSpeed) {
         super(arg, arg2, arg3);
         this.maxCapacity = maxCapacity;
         this.stressImpact = stressImpact;
         this.maxSpeed = maxSpeed;
+        if (mut == null) {
+            getOrCreateNetwork();
+        }
+        mut.setCapacity(maxCapacity);
         speedBehavior.between((int) -maxSpeed, (int) maxSpeed);
     }
 
@@ -234,6 +239,6 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
 
     @Override
     public WrappedBlockEnergyContainer getEnergyStorage() {
-        return energy == null ? energy = new WrappedBlockEnergyContainer(this, new SimpleEnergyContainer(maxCapacity)) : energy;
+        return energy == null ? energy = new WrappedBlockEnergyContainer(this, mut = new SimpleInsertOnlyMutableContainer(maxCapacity)) : energy;
     }
 }

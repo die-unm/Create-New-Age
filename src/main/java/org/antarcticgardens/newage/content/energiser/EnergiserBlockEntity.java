@@ -4,7 +4,6 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.Lang;
 import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
-import earth.terrarium.botarium.common.energy.impl.SimpleEnergyContainer;
 import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -13,6 +12,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.antarcticgardens.newage.SimpleInsertOnlyMutableContainer;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 
 import java.util.List;
@@ -23,11 +23,16 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
     public int tier;
     public float size = 0f;
     private EnergiserBehaviour energisingBehaviour;
+    private SimpleInsertOnlyMutableContainer mut;
 
     public EnergiserBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int tier) {
         super(type, pos, state);
         this.tier = tier;
         this.energisingBehaviour.maxAbsorptionSpeed = (int)Math.pow(2, tier*2);
+        if (mut == null) {
+            getOrCreateNetwork();
+        }
+        mut.setCapacity((long) (Math.pow(10, tier) * 1000));
     }
 
     protected AABB createRenderBoundingBox() {
@@ -78,7 +83,6 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
 
     @Override
     public WrappedBlockEnergyContainer getEnergyStorage() {
-        return energy == null ? energy = new WrappedBlockEnergyContainer(
-                this, new SimpleEnergyContainer((long) (Math.pow(10, tier) * 1000))) : energy;
+        return energy == null ? energy = new WrappedBlockEnergyContainer(this, mut = new SimpleInsertOnlyMutableContainer(0)) : energy;
     }
 }
