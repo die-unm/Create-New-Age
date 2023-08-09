@@ -14,7 +14,7 @@ import com.simibubi.create.foundation.utility.Lang;
 import com.simibubi.create.foundation.utility.VecHelper;
 import com.tterrag.registrate.builders.BlockEntityBuilder;
 import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
-import earth.terrarium.botarium.common.energy.impl.InsertOnlyEnergyContainer;
+import earth.terrarium.botarium.common.energy.impl.SimpleEnergyContainer;
 import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -234,6 +234,6 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
 
     @Override
     public WrappedBlockEnergyContainer getEnergyStorage() {
-        return energy == null ? energy = new WrappedBlockEnergyContainer(this, new InsertOnlyEnergyContainer(maxCapacity)) : energy;
+        return energy == null ? energy = new WrappedBlockEnergyContainer(this, new SimpleEnergyContainer(maxCapacity)) : energy;
     }
 }

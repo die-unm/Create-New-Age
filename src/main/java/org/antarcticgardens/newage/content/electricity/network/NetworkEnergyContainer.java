@@ -6,12 +6,11 @@ import earth.terrarium.botarium.common.energy.base.EnergySnapshot;
 import earth.terrarium.botarium.common.energy.impl.SimpleEnergySnapshot;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.antarcticgardens.newage.NewAgeBlocks;
 import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
 
 public class NetworkEnergyContainer implements EnergyContainer {
     private final ElectricalConnectorBlockEntity connector;
-    private final ElectricalNetwork network;
+    private ElectricalNetwork network;
 
     public NetworkEnergyContainer(ElectricalConnectorBlockEntity connector, ElectricalNetwork network) {
         this.connector = connector;
@@ -91,5 +90,9 @@ public class NetworkEnergyContainer implements EnergyContainer {
     @Override
     public CompoundTag serialize(CompoundTag nbt) {
         return new CompoundTag();
+    }
+
+    public void update(ElectricalNetwork network) {
+        this.network = network;
     }
 }

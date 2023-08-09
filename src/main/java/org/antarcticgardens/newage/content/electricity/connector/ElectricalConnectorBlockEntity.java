@@ -21,7 +21,9 @@ import org.antarcticgardens.newage.content.electricity.network.ElectricalNetwork
 import org.antarcticgardens.newage.content.electricity.network.NetworkEnergyContainer;
 import org.antarcticgardens.newage.content.electricity.wire.WireType;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ElectricalConnectorBlockEntity extends BlockEntity implements BotariumEnergyBlock<WrappedBlockEnergyContainer> {
     private final Map<ElectricalConnectorBlockEntity, WireType> connectors = new HashMap<>();
@@ -29,6 +31,8 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
 
     private ElectricalNetwork network;
     private WrappedBlockEnergyContainer energyContainer;
+
+    private NetworkEnergyContainer internal;
 
     protected boolean tickedBefore = false;
 
@@ -144,7 +148,12 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
 
     public void setNetwork(ElectricalNetwork network) {
         this.network = network;
-        energyContainer = new WrappedBlockEnergyContainer(this, new NetworkEnergyContainer(this, this.network));
+        if (energyContainer == null) {
+            internal = new NetworkEnergyContainer(this, this.network);
+            energyContainer = new WrappedBlockEnergyContainer(this, internal);
+        } else {
+            internal.update(this.network);
+        }
     }
 
     public ElectricalNetwork getNetwork() {
@@ -153,8 +162,9 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
 
     @Override
     public WrappedBlockEnergyContainer getEnergyStorage() {
-        if (network == null)
+        if (network == null) {
             setNetwork(new ElectricalNetwork(this));
+        }
         return energyContainer;
     }
 }

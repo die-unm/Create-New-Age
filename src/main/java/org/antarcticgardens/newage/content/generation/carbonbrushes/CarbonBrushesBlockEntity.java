@@ -4,10 +4,10 @@ import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.utility.Lang;
+import earth.terrarium.botarium.common.energy.EnergyApi;
 import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
 import earth.terrarium.botarium.common.energy.impl.ExtractOnlyEnergyContainer;
 import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
-import earth.terrarium.botarium.common.energy.util.EnergyHooks;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -90,7 +90,7 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
                 coilAmount++;
         }
 
-        EnergyHooks.distributeEnergyNearby(this);
+        EnergyApi.distributeEnergyNearby(this, getEnergyStorage().getStoredEnergy());
     }
 
     @Override
@@ -111,7 +111,7 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
             int energy = coil.takeGeneratedEnergy();
             lastOutput += energy;
             syncOut += energy;
-            energyContainer.internalInsert(energy, false);
+            getEnergyStorage().internalInsert(energy, false);
             return true;
         }
 
