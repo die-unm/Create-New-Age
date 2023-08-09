@@ -31,10 +31,12 @@ public class CreateNewAge {
 
 	public static final CreateRegistrate BASE_REGISTRATE = CreateRegistrate.create(MOD_ID);
 
-	public static final RegistryObject<CreativeModeTab> tab = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MOD_ID).register("create_new_age_tab",
+
+	private static DeferredRegister<CreativeModeTab> TAB_REGISTRAR = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MOD_ID);
+	public static final RegistryObject<CreativeModeTab> tab = TAB_REGISTRAR.register("create_new_age_tab",
 			() -> CreativeModeTab.builder()
 					.title(Component.translatable("item_group." + MOD_ID + ".tab"))
-					.icon(() -> NewAgeBlocks.ENERGISER_T1.asStack())
+					.icon(NewAgeBlocks.ENERGISER_T1::asStack)
 					.build()
 			); // TODO: make tab show up
 
@@ -55,9 +57,9 @@ public class CreateNewAge {
 			LOGGER.error("Failed to load config.", e);
 		}
 
-		REGISTRATE.registerEventListeners(modBus);
+		BASE_REGISTRATE.registerEventListeners(modBus);
+		TAB_REGISTRAR.register(modBus);
 
-		// TODO: make sure that energy containers work.
 		NewAgeBlocks.load();
 		NewAgeBlockEntityTypes.load();
 		NewAgeItems.load();
@@ -65,6 +67,9 @@ public class CreateNewAge {
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(CreateNewAgeClient::onInitializeClient);
 
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::generalSetup);
+
+		RecipeTool.register_type.register(modBus);
+		RecipeTool.register.register(modBus);
 
 		try {
 			type = RecipeTool.createIRecipeTypeInfo("energising", new ProcessingRecipeSerializer<>(EnergisingRecipe::new));

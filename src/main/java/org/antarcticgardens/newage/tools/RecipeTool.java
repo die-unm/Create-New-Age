@@ -12,8 +12,8 @@ import static org.antarcticgardens.newage.CreateNewAge.MOD_ID;
 
 public class RecipeTool {
 
-    private static final DeferredRegister<RecipeType<?>> register_type = DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, MOD_ID);
-    private static final DeferredRegister<RecipeSerializer<?>> register = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MOD_ID);
+    public static final DeferredRegister<RecipeType<?>> register_type = DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, MOD_ID);
+    public static final DeferredRegister<RecipeSerializer<?>> register = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MOD_ID);
     public static <S extends RecipeSerializer<?>> IRecipeTypeInfo createIRecipeTypeInfo(String name, S serializer) {
         var rt = new RecipeType() {
             @Override

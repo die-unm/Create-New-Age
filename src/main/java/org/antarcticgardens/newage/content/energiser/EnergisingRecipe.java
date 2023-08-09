@@ -1,14 +1,10 @@
 package org.antarcticgardens.newage.content.energiser;
 
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.compat.jei.category.sequencedAssembly.SequencedAssemblySubCategory;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
 import com.simibubi.create.content.processing.sequenced.IAssemblyRecipe;
-import com.simibubi.create.content.processing.sequenced.SequencedRecipe;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
@@ -18,8 +14,6 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import org.antarcticgardens.newage.CreateNewAge;
 import org.antarcticgardens.newage.NewAgeBlocks;
-import org.antarcticgardens.newage.compat.NotAnimatedEnergiser;
-import org.antarcticgardens.newage.tools.StringFormattingTool;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -27,26 +21,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAssemblyRecipe {
-
-    public static SequencedAssemblySubCategory subCategoryType = new SequencedAssemblySubCategory(52) {
-        private NotAnimatedEnergiser energiser;
-
-        {
-            energiser = new NotAnimatedEnergiser();
-        }
-
-        @Override
-        public void draw(SequencedRecipe<?> recipe, GuiGraphics graphics, double mouseX, double mouseY, int index) {
-            PoseStack ms = graphics.pose();
-            energiser.offset = index;
-            ms.pushPose();
-            ms.translate(-5, 50, 0);
-            ms.scale(.6f, .6f, .6f);
-            energiser.draw(graphics, getWidth() / 2, 0);
-            ms.popPose();
-            graphics.drawString(Minecraft.getInstance().font, Component.literal(StringFormattingTool.formatLong(((EnergisingRecipe)recipe.getAsAssemblyRecipe()).energyNeeded) + " ⚡"), 0, 20, 0x1166ff, false);
-        }
-    }; // TODO
 
     public int energyNeeded;
     public EnergisingRecipe(ProcessingRecipeBuilder.ProcessingRecipeParams params) {
@@ -98,7 +72,7 @@ public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAs
 
     @Override
     public Supplier<Supplier<SequencedAssemblySubCategory>> getJEISubCategory() {
-        return () -> () -> subCategoryType;
+        return () -> () -> EnergisinJeiRecipeCategoryHolder.subCategoryType;
     }
 
 
