@@ -34,7 +34,6 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
 
     public ElectricalConnectorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
-        setNetwork(new ElectricalNetwork(this));
     }
 
     @Override
@@ -154,6 +153,8 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
 
     @Override
     public WrappedBlockEnergyContainer getEnergyStorage() {
+        if (network == null)
+            setNetwork(new ElectricalNetwork(this));
         return energyContainer;
     }
 }

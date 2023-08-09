@@ -1,15 +1,12 @@
-package org.antarcticgardens.newage.content.electricity.connector;
+package org.antarcticgardens.newage.content.electricity.connector; // not actually but that was the only real way
 
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -24,16 +21,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
     public static final int WIRE_SECTIONS = 24;
     public static final float WIRE_THICKNESS = 0.03f;
 
-    public static final RenderType WIRE = RenderType.create(
-            "wire",
-            DefaultVertexFormat.POSITION_COLOR_LIGHTMAP,
-            VertexFormat.Mode.QUADS,
-            256,
-            false,
-            true,
-            RenderType.CompositeState.builder()
-                    .createCompositeState(false)
-    );
+    public static final RenderType WIRE = RenderType.leash();
 
     public ElectricalConnectorRenderer(BlockEntityRendererProvider.Context context) {
         super();
@@ -107,12 +95,18 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
         point(consumer, pose, -a, -a, 0.0f, color, lightA);
         point(consumer, pose, -a, -a, distance, color, lightB);
         point(consumer, pose, a, a, distance, color, lightB);
+
+        point(consumer, pose, a, a, distance, color, lightB);
         point(consumer, pose, a, a, 0.0f, color, lightA);
+        point(consumer, pose, -a, -a, 0.0f, color, lightA);
 
         point(consumer, pose, a, -a, 0.0f, color, lightA);
         point(consumer, pose, a, -a, distance, color, lightB);
         point(consumer, pose, -a, a, distance, color, lightB);
+
+        point(consumer, pose, -a, a, distance, color, lightB);
         point(consumer, pose, -a, a, 0.0f, color, lightA);
+        point(consumer, pose, a, -a, 0.0f, color, lightA);
     }
 
     private boolean isVertical(Vector3f vec, Vector3f up) {
