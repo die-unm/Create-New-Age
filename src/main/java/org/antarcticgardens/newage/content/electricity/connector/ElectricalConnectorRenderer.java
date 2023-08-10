@@ -1,15 +1,15 @@
-package org.antarcticgardens.newage.content.electricity.connector; // not actually but that was the only real way
+package org.antarcticgardens.newage.content.electricity.connector;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.antarcticgardens.newage.NewAgeRenderTypes;
 import org.antarcticgardens.newage.content.electricity.wire.ElectricWireItem;
 import org.antarcticgardens.newage.content.electricity.wire.WireType;
 import org.joml.Matrix4f;
@@ -20,8 +20,6 @@ import java.util.Map;
 public class ElectricalConnectorRenderer implements BlockEntityRenderer<ElectricalConnectorBlockEntity> {
     public static final int WIRE_SECTIONS = 24;
     public static final float WIRE_THICKNESS = 0.03f;
-
-    public static final RenderType WIRE = RenderType.leash();
 
     public ElectricalConnectorRenderer(BlockEntityRendererProvider.Context context) {
         super();
@@ -35,7 +33,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
 
             poseStack.pushPose();
 
-            VertexConsumer consumer = buffer.getBuffer(WIRE);
+            VertexConsumer consumer = buffer.getBuffer(NewAgeRenderTypes.WIRE);
 
             poseStack.translate(0.5f, 0.5f, 0.5f);
             Matrix4f pose = poseStack.last().pose();
@@ -95,18 +93,12 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
         point(consumer, pose, -a, -a, 0.0f, color, lightA);
         point(consumer, pose, -a, -a, distance, color, lightB);
         point(consumer, pose, a, a, distance, color, lightB);
-
-        point(consumer, pose, a, a, distance, color, lightB);
         point(consumer, pose, a, a, 0.0f, color, lightA);
-        point(consumer, pose, -a, -a, 0.0f, color, lightA);
 
         point(consumer, pose, a, -a, 0.0f, color, lightA);
         point(consumer, pose, a, -a, distance, color, lightB);
         point(consumer, pose, -a, a, distance, color, lightB);
-
-        point(consumer, pose, -a, a, distance, color, lightB);
         point(consumer, pose, -a, a, 0.0f, color, lightA);
-        point(consumer, pose, a, -a, 0.0f, color, lightA);
     }
 
     private boolean isVertical(Vector3f vec, Vector3f up) {

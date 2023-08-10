@@ -17,6 +17,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.AABB;
+import net.minecraftforge.common.extensions.IForgeBlockEntity;
 import org.antarcticgardens.newage.content.electricity.network.ElectricalNetwork;
 import org.antarcticgardens.newage.content.electricity.network.NetworkEnergyContainer;
 import org.antarcticgardens.newage.content.electricity.wire.WireType;
@@ -28,6 +30,8 @@ import java.util.Map;
 public class ElectricalConnectorBlockEntity extends BlockEntity implements BotariumEnergyBlock<WrappedBlockEnergyContainer> {
     private final Map<ElectricalConnectorBlockEntity, WireType> connectors = new HashMap<>();
     private final Map<BlockPos, WireType> connectorPositions = new HashMap<>();
+
+    private AABB renderBoundingBox;
 
     private ElectricalNetwork network;
     private WrappedBlockEnergyContainer energyContainer;
@@ -69,6 +73,18 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
                 connectorPositions.put(pos, wire);
             }
         }
+    }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        if (renderBoundingBox != null)
+            return renderBoundingBox;
+
+        return super.getRenderBoundingBox();
+    }
+
+    private AABB getTrueRenderBoundingBox() {
+        return super.getRenderBoundingBox();
     }
 
     @Override
@@ -135,11 +151,22 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
 
         entity.setChanged();
         setChanged();
+
+        updateRenderBoundingBox();
     }
 
     public void disconnect(ElectricalConnectorBlockEntity entity) {
         connectors.remove(entity);
         connectorPositions.remove(entity.getBlockPos());
+
+        updateRenderBoundingBox();
+    }
+
+    private void updateRenderBoundingBox() {
+        renderBoundingBox = getTrueRenderBoundingBox();
+
+        for (ElectricalConnectorBlockEntity connector : connectors.keySet())
+            renderBoundingBox = renderBoundingBox.minmax(connector.getTrueRenderBoundingBox());
     }
 
     public Map<ElectricalConnectorBlockEntity, WireType> getConnectors() {
