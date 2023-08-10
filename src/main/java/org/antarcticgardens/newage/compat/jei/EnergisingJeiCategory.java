@@ -3,7 +3,6 @@ package org.antarcticgardens.newage.compat.jei;
 import com.simibubi.create.compat.jei.ItemIcon;
 import com.simibubi.create.content.processing.recipe.ProcessingOutput;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
-import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -23,7 +22,7 @@ import java.util.Collections;
 
 import static com.simibubi.create.compat.jei.category.CreateRecipeCategory.getRenderedSlot;
 
-@JeiPlugin
+
 public class EnergisingJeiCategory implements IRecipeCategory<EnergisingRecipe> {
 
     @Override

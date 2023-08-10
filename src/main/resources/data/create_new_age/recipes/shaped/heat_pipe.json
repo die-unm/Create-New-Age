@@ -3,7 +3,7 @@
   "category": "building",
   "key": {
     "c": {
-      "tag": "c:copper_plates"
+      "tag": "forge:plates/copper"
     }
   },
   "pattern": [

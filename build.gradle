@@ -70,7 +70,8 @@ dependencies {
 //	 modImplementation("earth.terrarium.adastra:ad_astra-fabric-$minecraft_version:$ad_astra_version")
 
 	modCompileOnly("dev.emi:emi-forge:${emi_version}");
-	modCompileOnly("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
+	compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+	compileOnly("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
 	modCompileOnly("me.shedaniel:RoughlyEnoughItems-forge:${rei_version}");
 
 
