@@ -15,6 +15,7 @@ import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.api.common.util.EntryStacks;
+import me.shedaniel.rei.forge.REIPluginCommon;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -28,6 +29,7 @@ import org.antarcticgardens.newage.tools.StringFormattingTool;
 import java.util.ArrayList;
 import java.util.List;
 
+@REIPluginCommon
 public class NewAgeReiPlugin implements REIClientPlugin {
     private DisplayCategory<EnergiserDisplay> energisingCateogry;
     public static CategoryIdentifier<EnergiserDisplay> identifier;

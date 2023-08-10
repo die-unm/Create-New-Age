@@ -1,5 +1,6 @@
 package org.antarcticgardens.newage.compat.emi;
 
+import dev.emi.emi.api.EmiEntrypoint;
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
@@ -13,6 +14,7 @@ import org.antarcticgardens.newage.CreateNewAge;
 import org.antarcticgardens.newage.NewAgeBlocks;
 import org.antarcticgardens.newage.content.energiser.EnergisingRecipe;
 
+@EmiEntrypoint
 public class NewAgeEmiPlugin implements EmiPlugin {
 
     public static final ResourceLocation ENERGISING_SPRITE_SHEET = new ResourceLocation(CreateNewAge.MOD_ID, "textures/gui/emi_simplified_textures.png");
