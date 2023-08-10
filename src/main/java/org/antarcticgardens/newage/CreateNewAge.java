@@ -38,13 +38,13 @@ public class CreateNewAge {
 					.title(Component.translatable("item_group." + MOD_ID + ".tab"))
 					.icon(NewAgeBlocks.ENERGISER_T1::asStack)
 					.build()
-			); // TODO: make tab show up
+			);
 
 	public static final CreateRegistrate REGISTRATE = BASE_REGISTRATE.useCreativeTab(tab);
 
 
 	public static final ResourceKey<CreativeModeTab> CREATIVE_TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB,
-			new ResourceLocation(MOD_ID, "tab"));
+			new ResourceLocation(MOD_ID, "create_new_age_tab"));
 	public static IRecipeTypeInfo type;
 
 	public CreateNewAge() {
