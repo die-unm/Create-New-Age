@@ -79,7 +79,6 @@ public class CreateNewAge {
 	}
 
 	private void generalSetup(final FMLCommonSetupEvent event) {
-
 		event.enqueueWork(() -> BoilerHeaters.registerHeater(NewAgeBlocks.HEATER.get(), (level, pos, state) -> state.getValue(STRENGTH) - 1));
 	}
 
