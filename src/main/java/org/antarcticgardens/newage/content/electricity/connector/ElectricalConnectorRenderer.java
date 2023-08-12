@@ -18,7 +18,7 @@ import org.joml.Vector3f;
 import java.util.Map;
 
 public class ElectricalConnectorRenderer implements BlockEntityRenderer<ElectricalConnectorBlockEntity> {
-    public static final int WIRE_SECTIONS = 24;
+    public static final int WIRE_SECTIONS_PER_METER = 10;
     public static final float WIRE_THICKNESS = 0.03f;
 
     public ElectricalConnectorRenderer(BlockEntityRendererProvider.Context context) {
@@ -50,12 +50,13 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
             Vector3f lastSection = from;
             Vector3f direction = new Vector3f(to).sub(from).normalize();
             float distance = to.distance(from);
-            float perSection = distance / WIRE_SECTIONS;
+            int sections = (int) Math.ceil(distance * WIRE_SECTIONS_PER_METER);
+            float perSection = distance / sections;
 
-            for (int i = 0; i <= WIRE_SECTIONS; i++) {
+            for (int i = 0; i <= sections; i++) {
                 int[] color = (i % 2 == 0) ? e.getValue().getColor1() : e.getValue().getColor2();
-                Vector3f sectionTo = new Vector3f(direction).mul(perSection * i).add(0.0f, (float) catenary(i, distance), 0.0f);
-                wireSection(consumer, pose, lastSection, sectionTo, color, calculateLighting(blockEntity, lastSection), calculateLighting(blockEntity, sectionTo));
+                Vector3f sectionTo = new Vector3f(direction).mul(perSection * i).add(0.0f, catenary(i, distance, sections), 0.0f);
+                wireSection(consumer, pose, lastSection, sectionTo, color, calculateLighting(blockEntity, lastSection, sectionTo));
                 lastSection = sectionTo;
             }
 
@@ -63,27 +64,25 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
         }
     }
 
-    private int calculateLighting(BlockEntity entity, Vector3f pos) {
-        BlockPos blockPos = new BlockPos(entity.getBlockPos()).offset(ceil(pos.x()), ceil(pos.y()), ceil(pos.z()));
+    private int calculateLighting(BlockEntity entity, Vector3f pos, Vector3f pos1) {
+        BlockPos blockPos = new BlockPos(entity.getBlockPos()).offset(Math.round(pos.x()), Math.round(pos.y()), Math.round(pos.z()));
+        BlockPos blockPos1 = new BlockPos(entity.getBlockPos()).offset(Math.round(pos1.x()), Math.round(pos1.y()), Math.round(pos1.z()));
+
         int sky = entity.getLevel().getBrightness(LightLayer.SKY, blockPos);
         int block = entity.getLevel().getBrightness(LightLayer.BLOCK, blockPos);
-        return LightTexture.pack(block, sky);
+        int sky1 = entity.getLevel().getBrightness(LightLayer.SKY, blockPos1);
+        int block1 = entity.getLevel().getBrightness(LightLayer.BLOCK, blockPos1);
+
+        return LightTexture.pack(Math.max(block, block1), Math.max(sky, sky1));
     }
 
-    private int ceil(float a) {
-        if (a >= 0)
-            return (int) Math.ceil(a);
-        else
-            return (int) -Math.ceil(-a);
-    }
-
-    private double catenary(double x, double length) {
+    private float catenary(double x, double length, int sections) {
         double a = length / ElectricWireItem.MAX_DISTANCE;
-        x = (x / WIRE_SECTIONS * 2 - 1);
-        return (Math.cosh(x) - Math.cosh(1.0f)) * a;
+        x = (x / sections * 2 - 1);
+        return (float) ((Math.cosh(x) - Math.cosh(1.0f)) * a);
     }
 
-    private void wireSection(VertexConsumer consumer, Matrix4f pose, Vector3f from, Vector3f to, int[] color, int lightA, int lightB) {
+    private void wireSection(VertexConsumer consumer, Matrix4f pose, Vector3f from, Vector3f to, int[] color, int light) {
         Vector3f direction = new Vector3f(to).sub(from).normalize();
         Vector3f up = new Vector3f(0.0f, 1.0f, 0.0f);
 
@@ -94,25 +93,26 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                 .translate(from)
                 .rotateTowards(direction, up);
 
-        float a = WIRE_THICKNESS / 2;
+        int r = color[0];
+        int g = color[1];
+        int b = color[2];
+        int z = color[3];
+
+        float f = WIRE_THICKNESS / 2;
         float distance = from.distance(to);
 
-        point(consumer, pose, -a, -a, 0.0f, color, lightA);
-        point(consumer, pose, -a, -a, distance, color, lightB);
-        point(consumer, pose, a, a, distance, color, lightB);
-        point(consumer, pose, a, a, 0.0f, color, lightA);
+        consumer.vertex(pose, -f, -f, 0.0f).color(r, g, b, z).uv2(light).endVertex();
+        consumer.vertex(pose, -f, -f, distance).color(r, g, b, z).uv2(light).endVertex();
+        consumer.vertex(pose, f, f, distance).color(r, g, b, z).uv2(light).endVertex();
+        consumer.vertex(pose, f, f, 0.0f).color(r, g, b, z).uv2(light).endVertex();
 
-        point(consumer, pose, a, -a, 0.0f, color, lightA);
-        point(consumer, pose, a, -a, distance, color, lightB);
-        point(consumer, pose, -a, a, distance, color, lightB);
-        point(consumer, pose, -a, a, 0.0f, color, lightA);
+        consumer.vertex(pose, f, -f, 0.0f).color(r, g, b, z).uv2(light).endVertex();
+        consumer.vertex(pose, f, -f, distance).color(r, g, b, z).uv2(light).endVertex();
+        consumer.vertex(pose, -f, f, distance).color(r, g, b, z).uv2(light).endVertex();
+        consumer.vertex(pose, -f, f, 0.0f).color(r, g, b, z).uv2(light).endVertex();
     }
 
     private boolean isVertical(Vector3f vec, Vector3f up) {
         return vec.equals(up, 0.001f) || vec.equals(up.mul(-1.0f), 0.001f);
-    }
-
-    private void point(VertexConsumer consumer, Matrix4f pose, float x, float y, float z, int[] color, int light) {
-        consumer.vertex(pose, x, y, z).color(color[0], color[1], color[2], color[3]).uv2(light).endVertex();
     }
 }
