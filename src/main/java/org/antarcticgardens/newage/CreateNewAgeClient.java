@@ -19,6 +19,7 @@ public class CreateNewAgeClient {
         PonderRegistrationHelper helper = new PonderRegistrationHelper(CreateNewAge.MOD_ID);
         helper.addStoryBoard(NewAgeBlocks.ENERGISER_T1, "energiser", EnergiserPonder::ponder);
         helper.addStoryBoard(NewAgeBlocks.ENERGISER_T2, "energiser", EnergiserPonder::ponder);
+        helper.addStoryBoard(NewAgeBlocks.ENERGISER_T3, "energiser", EnergiserPonder::ponder);
 
         helper.addStoryBoard(NewAgeBlocks.HEAT_PIPE, "heating", HeatingPonder::ponder);
         helper.addStoryBoard(NewAgeBlocks.HEAT_PUMP, "heating", HeatingPonder::ponder);
@@ -39,6 +40,7 @@ public class CreateNewAgeClient {
         // ToolTip
         addToolTipModifier(NewAgeBlocks.ENERGISER_T1);
         addToolTipModifier(NewAgeBlocks.ENERGISER_T2);
+        addToolTipModifier(NewAgeBlocks.ENERGISER_T3);
         addToolTipModifier(NewAgeBlocks.STIRLING_ENGINE);
         addToolTipModifier(NewAgeBlocks.GENERATOR_COIL);
     }

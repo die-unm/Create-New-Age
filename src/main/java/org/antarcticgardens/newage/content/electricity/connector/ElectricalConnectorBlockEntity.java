@@ -26,9 +26,7 @@ import org.antarcticgardens.newage.content.electricity.network.ElectricalNetwork
 import org.antarcticgardens.newage.content.electricity.network.NetworkEnergyContainer;
 import org.antarcticgardens.newage.content.electricity.wire.WireType;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ElectricalConnectorBlockEntity extends BlockEntity implements BotariumEnergyBlock<WrappedBlockEnergyContainer> {
     private final Map<ElectricalConnectorBlockEntity, WireType> connectors = new HashMap<>();
@@ -159,6 +157,11 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
         setChanged();
 
         updateRenderBoundingBox();
+
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.getChunkSource().blockChanged(entity.getBlockPos());
+            serverLevel.getChunkSource().blockChanged(getBlockPos());
+        }
     }
 
     public boolean isConnected(BlockPos pos) {
