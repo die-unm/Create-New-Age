@@ -2,13 +2,20 @@ package org.antarcticgardens.newage.content.electricity.connector;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.antarcticgardens.newage.Configurations;
 import org.antarcticgardens.newage.NewAgeRenderTypes;
 import org.antarcticgardens.newage.content.electricity.wire.ElectricWireItem;
@@ -19,46 +26,122 @@ import org.joml.Vector3f;
 import java.util.Map;
 
 public class ElectricalConnectorRenderer implements BlockEntityRenderer<ElectricalConnectorBlockEntity> {
+    public static final float SAG_FACTOR = 0.92f;
+
+    public static final int[] TOO_LONG1 = { 204, 0, 0, 255 };
+    public static final int[] TOO_LONG2 = { 150, 0, 0, 255 };
+
     public ElectricalConnectorRenderer(BlockEntityRendererProvider.Context context) {
         super();
     }
 
     @Override
     public void render(ElectricalConnectorBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
+        VertexConsumer consumer = buffer.getBuffer(NewAgeRenderTypes.WIRE);
+        BlockPos pos = blockEntity.getBlockPos();
+        Vector3f from = new Vector3f(0.0f);
+
         for (Map.Entry<BlockPos, WireType> e : blockEntity.getConnectorPositions().entrySet()) {
             if (e.getKey().hashCode() > blockEntity.getBlockPos().hashCode())
                 continue;
 
             poseStack.pushPose();
 
-            VertexConsumer consumer = buffer.getBuffer(NewAgeRenderTypes.WIRE);
-
             poseStack.translate(0.5f, 0.5f, 0.5f);
             Matrix4f pose = poseStack.last().pose();
 
-            BlockPos pos = blockEntity.getBlockPos();
-
-            Vector3f from = new Vector3f(0.0f);
             Vector3f to = new Vector3f(
                     e.getKey().getX() - pos.getX(),
                     e.getKey().getY() - pos.getY(),
                     e.getKey().getZ() - pos.getZ()
             );
 
-            Vector3f lastSection = from;
-            Vector3f direction = new Vector3f(to).sub(from).normalize();
-            float distance = to.distance(from);
-            int sections = (int) Math.ceil(distance * Configurations.WIRE_SECTIONS_PER_METER);
-            float perSection = distance / sections;
-
-            for (int i = 0; i <= sections; i++) {
-                int[] color = (i % 2 == 0) ? e.getValue().getColor1() : e.getValue().getColor2();
-                Vector3f sectionTo = new Vector3f(direction).mul(perSection * i).add(0.0f, catenary(i, distance, sections), 0.0f);
-                wireSection(consumer, pose, lastSection, sectionTo, color, calculateLighting(blockEntity, lastSection, sectionTo));
-                lastSection = sectionTo;
-            }
+            renderWire(consumer, pose, from, to, blockEntity, e.getValue().getColor1(), e.getValue().getColor2());
 
             poseStack.popPose();
+        }
+
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player != null) {
+            ItemStack itemInHand = player.getMainHandItem();
+
+            if (!(itemInHand.getItem() instanceof ElectricWireItem))
+                itemInHand = player.getOffhandItem();
+
+            if (itemInHand.getItem() instanceof ElectricWireItem wire) {
+                BlockPos bound = wire.getBoundConnector(itemInHand);
+
+                if (bound != null && bound.equals(blockEntity.getBlockPos())) {
+                    HitResult hit = player.pick(Minecraft.getInstance().gameMode.getPickRange(), partialTick, false);
+                    Vec3 eyePos = player.getEyePosition(partialTick);
+                    Vec3 playerPos = eyePos.add(player.getViewVector(partialTick).normalize().scale(2.0f));
+
+                    if (hit instanceof BlockHitResult blockHit) {
+                        Vec3 vec = eyePos.add(blockHit.getLocation().subtract(eyePos).scale(0.9f));
+
+                        if (eyePos.distanceTo(playerPos) > eyePos.distanceTo(vec))
+                            playerPos = vec;
+                    }
+
+                    Vector3f to = new Vector3f(
+                            (float) (playerPos.x - pos.getX() - 0.5),
+                            (float) (playerPos.y - pos.getY() - 0.5),
+                            (float) (playerPos.z - pos.getZ() - 0.5)
+                    );
+
+                    double distance = playerPos.distanceToSqr(bound.getX(), bound.getY(), bound.getZ());
+
+                    if (distance > Mth.square(ElectricWireItem.MAX_DISTANCE * 2))
+                        return;
+
+                    int[] color1 = wire.getWireType().getColor1();
+                    int[] color2 = wire.getWireType().getColor2();
+
+                    if (Minecraft.getInstance().gameMode != null && hit instanceof BlockHitResult blockHit) {
+                        if (blockEntity.getLevel().getBlockEntity(blockHit.getBlockPos()) instanceof ElectricalConnectorBlockEntity connector) {
+                            if (connector.isConnected(blockEntity.getBlockPos()))
+                                return;
+
+                            to = new Vector3f(
+                                    blockHit.getBlockPos().getX() - pos.getX(),
+                                    blockHit.getBlockPos().getY() - pos.getY(),
+                                    blockHit.getBlockPos().getZ() - pos.getZ()
+                            );
+
+                            distance = connector.getBlockPos().distSqr(blockEntity.getBlockPos());
+                        }
+                    }
+
+                    if (distance > Mth.square(ElectricWireItem.MAX_DISTANCE)) {
+                        color1 = TOO_LONG1;
+                        color2 = TOO_LONG2;
+                    }
+
+                    poseStack.pushPose();
+
+                    poseStack.translate(0.5f, 0.5f, 0.5f);
+                    Matrix4f pose = poseStack.last().pose();
+
+                    renderWire(consumer, pose, from, to, blockEntity, color1, color2);
+
+                    poseStack.popPose();
+                }
+            }
+        }
+    }
+
+    private void renderWire(VertexConsumer consumer, Matrix4f pose, Vector3f from, Vector3f to, ElectricalConnectorBlockEntity blockEntity, int[] color1, int[] color2) {
+        Vector3f lastSection = from;
+        Vector3f direction = new Vector3f(to).sub(from).normalize();
+        float distance = to.distance(from);
+        int sections = (int) Math.ceil(distance * Configurations.WIRE_SECTIONS_PER_METER);
+        float perSection = distance / sections;
+
+        for (int i = 0; i <= sections; i++) {
+            int[] color = (i % 2 == 0) ? color1 : color2;
+            Vector3f sectionTo = new Vector3f(direction).mul(perSection * i).add(0.0f, catenary(i, distance, sections), 0.0f);
+            wireSection(consumer, pose, lastSection, sectionTo, color, calculateLighting(blockEntity, lastSection, sectionTo));
+            lastSection = sectionTo;
         }
     }
 
@@ -80,7 +163,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
     }
 
     private float catenary(double x, double length, int sections) {
-        double a = length / ElectricWireItem.MAX_DISTANCE;
+        double a = length / ElectricWireItem.MAX_DISTANCE * SAG_FACTOR;
         x = (x / sections * 2 - 1);
         return (float) ((Math.cosh(x) - Math.cosh(1.0f)) * a);
     }
