@@ -1,5 +1,6 @@
 package org.antarcticgardens.newage;
 
+import com.simibubi.create.content.contraptions.ContraptionMovementSetting;
 import com.simibubi.create.content.fluids.tank.BoilerHeaters;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeSerializer;
 import com.simibubi.create.foundation.data.CreateRegistrate;
@@ -45,7 +46,7 @@ public class CreateNewAge {
 
 	public static final ResourceKey<CreativeModeTab> CREATIVE_TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB,
 			new ResourceLocation(MOD_ID, "create_new_age_tab"));
-	public static IRecipeTypeInfo type;
+	public static IRecipeTypeInfo ENERGISING_RECIPE_TYPE;
 
 	public CreateNewAge() {
 		var modBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -72,15 +73,16 @@ public class CreateNewAge {
 		RecipeTool.register.register(modBus);
 
 		try {
-			type = RecipeTool.createIRecipeTypeInfo("energising", new ProcessingRecipeSerializer<>(EnergisingRecipe::new));
+			ENERGISING_RECIPE_TYPE = RecipeTool.createIRecipeTypeInfo("energising", new ProcessingRecipeSerializer<>(EnergisingRecipe::new));
 		} catch (Exception e) {
-			LOGGER.error("Exceiption", e);
+			LOGGER.error("Exception", e);
 		}
 	}
 
 	private void generalSetup(final FMLCommonSetupEvent event) {
-		event.enqueueWork(() -> BoilerHeaters.registerHeater(NewAgeBlocks.HEATER.get(), (level, pos, state) -> state.getValue(STRENGTH) - 1));
+		event.enqueueWork(() -> {
+			BoilerHeaters.registerHeater(NewAgeBlocks.HEATER.get(), (level, pos, state) -> state.getValue(STRENGTH) - 1);
+			ContraptionMovementSetting.register(NewAgeBlocks.ELECTRICAL_CONNECTOR.get(), () -> ContraptionMovementSetting.UNMOVABLE);
+		});
 	}
-
-
 }

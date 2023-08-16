@@ -98,7 +98,7 @@ public class NewAgeReiPlugin implements REIClientPlugin {
 
     @Override
     public void registerDisplays(DisplayRegistry registry) {
-        for (Recipe<Container> containerRecipe : registry.getRecipeManager().getAllRecipesFor(CreateNewAge.type.getType())) {
+        for (Recipe<Container> containerRecipe : registry.getRecipeManager().getAllRecipesFor(CreateNewAge.ENERGISING_RECIPE_TYPE.getType())) {
             registry.add(new EnergiserDisplay((EnergisingRecipe) containerRecipe));
         }
     }

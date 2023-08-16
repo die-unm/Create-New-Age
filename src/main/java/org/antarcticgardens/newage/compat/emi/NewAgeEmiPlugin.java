@@ -37,7 +37,7 @@ public class NewAgeEmiPlugin implements EmiPlugin {
         RecipeManager manager = registry.getRecipeManager();
 
         // Use vanilla's concept of your recipes and pass them to your EmiRecipe representation
-        for (Recipe<Container> recipe : manager.getAllRecipesFor(CreateNewAge.type.getType())) {
+        for (Recipe<Container> recipe : manager.getAllRecipesFor(CreateNewAge.ENERGISING_RECIPE_TYPE.getType())) {
             registry.addRecipe(new EnergisingEmiRecipe((EnergisingRecipe) recipe));
         }
     }

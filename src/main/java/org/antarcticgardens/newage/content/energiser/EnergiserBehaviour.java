@@ -4,6 +4,7 @@ import com.simibubi.create.content.kinetics.belt.BeltHelper;
 import com.simibubi.create.content.kinetics.belt.behaviour.BeltProcessingBehaviour;
 import com.simibubi.create.content.kinetics.belt.behaviour.TransportedItemStackHandlerBehaviour;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
+import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
@@ -13,6 +14,7 @@ import org.antarcticgardens.newage.CreateNewAge;
 import org.joml.Math;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class EnergiserBehaviour extends BeltProcessingBehaviour {
@@ -30,8 +32,15 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
         if (be.getLevel() == null) {
             return null;
         }
-        
-        List<EnergisingRecipe> recipes = be.getLevel().getRecipeManager().getAllRecipesFor(CreateNewAge.type.getType());
+
+        Optional<EnergisingRecipe> assemblyRecipe =
+                SequencedAssemblyRecipe.getRecipe(getWorld(), stack, CreateNewAge.ENERGISING_RECIPE_TYPE.getType(), EnergisingRecipe.class);
+
+        if (assemblyRecipe.isPresent()) {
+            return assemblyRecipe.get();
+        }
+
+        List<EnergisingRecipe> recipes = be.getLevel().getRecipeManager().getAllRecipesFor(CreateNewAge.ENERGISING_RECIPE_TYPE.getType());
 
         for (EnergisingRecipe recipe : recipes) {
             if (recipe.test(stack)) {

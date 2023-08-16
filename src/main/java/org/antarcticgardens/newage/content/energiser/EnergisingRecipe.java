@@ -24,7 +24,7 @@ public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAs
 
     public int energyNeeded;
     public EnergisingRecipe(ProcessingRecipeBuilder.ProcessingRecipeParams params) {
-        super(CreateNewAge.type, params);
+        super(CreateNewAge.ENERGISING_RECIPE_TYPE, params);
     }
 
     @Override
