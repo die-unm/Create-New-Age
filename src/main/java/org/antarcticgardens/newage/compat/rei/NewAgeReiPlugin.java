@@ -2,7 +2,6 @@ package org.antarcticgardens.newage.compat.rei;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
-import me.shedaniel.rei.api.client.gui.DisplayRenderer;
 import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
@@ -16,7 +15,6 @@ import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import me.shedaniel.rei.forge.REIPluginCommon;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -31,22 +29,19 @@ import java.util.List;
 
 @REIPluginCommon
 public class NewAgeReiPlugin implements REIClientPlugin {
-    private DisplayCategory<EnergiserDisplay> energisingCateogry;
     public static CategoryIdentifier<EnergiserDisplay> identifier;
 
     @Override
     public void registerCategories(CategoryRegistry registry) {
+        identifier = () -> new ResourceLocation(CreateNewAge.MOD_ID, "rei_plugin");
 
-        identifier = () -> new ResourceLocation(CreateNewAge.MOD_ID, "jei_plugin");
-
-        energisingCateogry = new DisplayCategory<>() {
-
+        DisplayCategory<EnergiserDisplay> energisingCategory = new DisplayCategory<>() {
             @Override
             public List<Widget> setupDisplay(EnergiserDisplay display, Rectangle bounds) {
-
                 Point origin = new Point(bounds.x, bounds.y + 5);
 
                 List<Widget> widgets = new ArrayList<>();
+                widgets.add(Widgets.createRecipeBase(bounds));
                 widgets.add(Widgets.createSlot(new Point(origin.x + 26, origin.y)).markInput().entries(EntryIngredients.ofIngredient(display.recipe.getIngredients().get(0))));
                 widgets.add(Widgets.createArrow(new Point(origin.x + 50, origin.y)));
                 widgets.add(Widgets.createLabel(new Point(origin.x + 60, origin.y + 20), Component.literal(StringFormattingTool.formatLong(display.recipe.energyNeeded) + " ⚡")).color(0x1166ff).noShadow());
@@ -58,21 +53,6 @@ public class NewAgeReiPlugin implements REIClientPlugin {
                 }
 
                 return widgets;
-            }
-
-
-            @Override
-            public DisplayRenderer getDisplayRenderer(EnergiserDisplay display) {
-                return new DisplayRenderer() {
-                    @Override
-                    public int getHeight() {
-                        return 50;
-                    }
-                    @Override
-                    public void render(GuiGraphics graphics, Rectangle bounds, int mouseX, int mouseY, float delta) {
-
-                    }
-                };
             }
 
             @Override
@@ -89,9 +69,14 @@ public class NewAgeReiPlugin implements REIClientPlugin {
             public Renderer getIcon() {
                 return EntryStacks.of(NewAgeBlocks.ENERGISER_T2.asStack());
             }
+
+            @Override
+            public int getDisplayHeight() {
+                return 36;
+            }
         };
 
-        registry.add(energisingCateogry);
+        registry.add(energisingCategory);
 
         registry.addWorkstations(identifier, EntryStacks.of(NewAgeBlocks.ENERGISER_T1), EntryStacks.of(NewAgeBlocks.ENERGISER_T2), EntryStacks.of(NewAgeBlocks.ENERGISER_T3));
     }
