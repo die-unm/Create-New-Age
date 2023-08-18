@@ -1,9 +1,14 @@
 package org.antarcticgardens.newage;
 
+import com.simibubi.create.Create;
+import com.simibubi.create.foundation.config.ui.BaseConfigScreen;
 import com.simibubi.create.foundation.item.KineticStats;
 import com.simibubi.create.foundation.item.TooltipModifier;
 import com.simibubi.create.foundation.ponder.PonderRegistrationHelper;
 import com.tterrag.registrate.util.entry.BlockEntry;
+import net.minecraftforge.client.ConfigScreenHandler;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.antarcticgardens.newage.content.electricity.ElectricityPonder;
 import org.antarcticgardens.newage.content.energiser.EnergiserPonder;
@@ -58,6 +63,14 @@ public class CreateNewAgeClient {
         addToolTipModifier(NewAgeBlocks.ENERGISER_T3);
         addToolTipModifier(NewAgeBlocks.STIRLING_ENGINE);
         addToolTipModifier(NewAgeBlocks.GENERATOR_COIL);
+
+        ModContainer modContainer = ModList.get()
+                .getModContainerById(CreateNewAge.MOD_ID)
+                .orElseThrow(() -> new IllegalStateException("What the..."));
+
+        modContainer.registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
+                () -> new ConfigScreenHandler.ConfigScreenFactory(
+                        (mc, previousScreen) -> new BaseConfigScreen(previousScreen, CreateNewAge.MOD_ID)));
     }
 
     public static void addToolTipModifier(BlockEntry<?> entry) {
