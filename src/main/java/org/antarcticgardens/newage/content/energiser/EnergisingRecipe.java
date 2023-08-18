@@ -14,6 +14,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import org.antarcticgardens.newage.CreateNewAge;
 import org.antarcticgardens.newage.NewAgeBlocks;
+import org.antarcticgardens.newage.compat.jei.JeiEnergisingSubCategory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAssemblyRecipe {
+    public static JeiEnergisingSubCategory subCategory = new JeiEnergisingSubCategory();
 
     public int energyNeeded;
     public EnergisingRecipe(ProcessingRecipeBuilder.ProcessingRecipeParams params) {
@@ -72,7 +74,7 @@ public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAs
 
     @Override
     public Supplier<Supplier<SequencedAssemblySubCategory>> getJEISubCategory() {
-        return () -> () -> EnergisinJeiRecipeCategoryHolder.subCategoryType;
+        return () -> () -> subCategory;
     }
 
 
@@ -88,7 +90,4 @@ public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAs
         return ingredients.get(0)
                 .test(stack);
     }
-
-
-
 }
