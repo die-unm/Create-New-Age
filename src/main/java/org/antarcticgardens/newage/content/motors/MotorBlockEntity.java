@@ -23,8 +23,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.antarcticgardens.newage.Configurations;
 import org.antarcticgardens.newage.SimpleInsertOnlyMutableContainer;
+import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 
 import java.util.List;
@@ -219,7 +219,7 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
         super.tick();
 
         if (!level.isClientSide()) {
-            int needed = (int) Math.ceil((stressImpact) * Configurations.SU_TO_ENERGY);
+            int needed = (int) Math.ceil((stressImpact) * NewAgeConfig.getCommon().suToEnergy.get());
 
             e = needsPower == powered ? energy.extractEnergy(needed, false) : 0;
             if (e > 0) {

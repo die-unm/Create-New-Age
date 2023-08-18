@@ -15,12 +15,11 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
+import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.energiser.EnergisingRecipe;
 import org.antarcticgardens.newage.tools.RecipeTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 import static org.antarcticgardens.newage.content.heat.heater.HeaterBlock.STRENGTH;
 
@@ -52,12 +51,6 @@ public class CreateNewAge {
 		var modBus = FMLJavaModLoadingContext.get().getModEventBus();
 		LOGGER.info("Hello 1.20.1 Create!");
 
-		try {
-			Configurations.load();
-		} catch (IOException e) {
-			LOGGER.error("Failed to load config.", e);
-		}
-
 		BASE_REGISTRATE.registerEventListeners(modBus);
 		TAB_REGISTRAR.register(modBus);
 
@@ -66,6 +59,8 @@ public class CreateNewAge {
 		NewAgeItems.load();
 
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(CreateNewAgeClient::onInitializeClient);
+
+		NewAgeConfig.getCommon();
 
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::generalSetup);
 
