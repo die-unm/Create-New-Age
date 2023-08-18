@@ -28,7 +28,7 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
     public EnergiserBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int tier) {
         super(type, pos, state);
         this.tier = tier;
-        this.energisingBehaviour.maxAbsorptionSpeed = (int)Math.pow(2, tier*2);
+        this.energisingBehaviour.tier = tier;
         if (mut == null) {
             getOrCreateNetwork();
         }
