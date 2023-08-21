@@ -3,10 +3,10 @@ package org.antarcticgardens.newage.content.reactor.reactorrod;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -27,9 +26,6 @@ import org.antarcticgardens.newage.NewAgeBlocks;
 import org.antarcticgardens.newage.content.reactor.ReactorBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ReactorRodBlock extends ReactorBlock implements EntityBlock {
     public ReactorRodBlock(Properties properties) {
@@ -53,14 +49,9 @@ public class ReactorRodBlock extends ReactorBlock implements EntityBlock {
         if (state.getValue(ACTIVE)) {
             level.setBlock(pos, NewAgeBlocks.CORIUM.getDefaultState(), 3);
             if (level instanceof ServerLevel lvl) {
-                lvl.explode(null, pos.getX(), pos.getY(), pos.getZ(), 2.0f, true, Level.ExplosionInteraction.TNT);
+                lvl.explode(null, pos.getX(), pos.getY(), pos.getZ(), 2.0f, true, Explosion.BlockInteraction.NONE);
             }
         }
-    }
-
-    @Override
-    public List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
-        return state.getValue(ACTIVE) ? new ArrayList<>() : super.getDrops(state, params);
     }
 
 

@@ -13,14 +13,15 @@ import com.simibubi.create.foundation.utility.AngleHelper;
 import com.simibubi.create.foundation.utility.Lang;
 import com.simibubi.create.foundation.utility.VecHelper;
 import com.tterrag.registrate.builders.BlockEntityBuilder;
-import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
-import earth.terrarium.botarium.common.energy.impl.SimpleEnergyContainer;
-import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
+import earth.terrarium.botarium.api.energy.EnergyBlock;
+import earth.terrarium.botarium.api.energy.InsertOnlyEnergyContainer;
+import earth.terrarium.botarium.api.energy.StatefulEnergyContainer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -29,10 +30,10 @@ import org.antarcticgardens.newage.tools.StringFormattingTool;
 
 import java.util.List;
 
-public class MotorBlockEntity extends GeneratingKineticBlockEntity implements BotariumEnergyBlock<WrappedBlockEnergyContainer>, IHaveGoggleInformation {
+public class MotorBlockEntity extends GeneratingKineticBlockEntity implements EnergyBlock, IHaveGoggleInformation {
 
     public boolean needsPower = false;
-    public WrappedBlockEnergyContainer energy;
+    public InsertOnlyEnergyContainer energy;
     private final float stressImpact;
     private final float maxSpeed;
     public MotorScrollValueBehaviour speedBehavior;
@@ -47,7 +48,7 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
 
     public MotorBlockEntity(BlockEntityType<?> arg, BlockPos arg2, BlockState arg3, long maxCapacity, float stressImpact, float maxSpeed) {
         super(arg, arg2, arg3);
-        energy = new WrappedBlockEnergyContainer(this, new SimpleEnergyContainer(maxCapacity));
+        energy = new InsertOnlyEnergyContainer(this, maxCapacity);
         this.stressImpact = stressImpact;
         this.maxSpeed = maxSpeed;
         speedBehavior.between((int) -maxSpeed, (int) maxSpeed);
@@ -66,6 +67,12 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
         speedBehavior.value = getDefaultSpeed();
         speedBehavior.withCallback(i -> this.updateGeneratedRotation());
         behaviours.add(speedBehavior);
+    }
+
+    @Override
+    public void update() {
+        this.setChanged();
+        this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
     }
 
     static class MotorValueBox extends ValueBoxTransform.Sided {
@@ -237,7 +244,7 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
     }
 
     @Override
-    public WrappedBlockEnergyContainer getEnergyStorage() {
+    public StatefulEnergyContainer getEnergyStorage() {
         return energy;
     }
 }

@@ -1,8 +1,8 @@
 package org.antarcticgardens.newage.content.electricity.connector;
 
 import com.simibubi.create.foundation.utility.NBTHelper;
-import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
-import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
+import earth.terrarium.botarium.api.energy.EnergyBlock;
+import earth.terrarium.botarium.api.energy.StatefulEnergyContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,14 +25,16 @@ import org.antarcticgardens.newage.content.electricity.network.ElectricalNetwork
 import org.antarcticgardens.newage.content.electricity.network.NetworkEnergyContainer;
 import org.antarcticgardens.newage.content.electricity.wire.WireType;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ElectricalConnectorBlockEntity extends BlockEntity implements BotariumEnergyBlock<WrappedBlockEnergyContainer> {
+public class ElectricalConnectorBlockEntity extends BlockEntity implements EnergyBlock {
     private final Map<ElectricalConnectorBlockEntity, WireType> connectors = new HashMap<>();
     private final Map<BlockPos, WireType> connectorPositions = new HashMap<>();
 
     private ElectricalNetwork network;
-    private WrappedBlockEnergyContainer energyContainer;
+    private StatefulEnergyContainer<ElectricalConnectorBlockEntity> energyContainer;
 
     protected boolean tickedBefore = false;
 
@@ -160,15 +163,23 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
 
     public void setNetwork(ElectricalNetwork network) {
         this.network = network;
-        energyContainer = new WrappedBlockEnergyContainer(this, new NetworkEnergyContainer(this, this.network));
+        energyContainer = new NetworkEnergyContainer(this, this.network);
     }
 
     public ElectricalNetwork getNetwork() {
         return network;
     }
 
+
+
     @Override
-    public WrappedBlockEnergyContainer getEnergyStorage() {
+    public void update() {
+        this.setChanged();
+        this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
+    }
+
+    @Override
+    public StatefulEnergyContainer getEnergyStorage() {
         return energyContainer;
     }
 }

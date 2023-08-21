@@ -12,9 +12,7 @@ archivesBaseName = project.archives_base_name
 repositories {
 	mavenLocal()
 	maven { url = "https://maven.shedaniel.me/" } // Cloth Config, REI
-	maven { url = "https://dvs1.progwml6.com/files/maven/" } // JEI
 	maven { url = "https://maven.parchmentmc.org" } // Parchment mappings
-	maven { url = "https://maven.quiltmc.org/repository/release" } // Quilt Mappings
 	maven { url = "https://api.modrinth.com/maven" } // LazyDFU
 	maven { url = "https://maven.terraformersmc.com/releases/" } // Mod Menu
 	maven { url = "https://mvn.devos.one/snapshots/" } // Create, Porting Lib, Forge Tags, Milk Lib, Registrate
@@ -62,7 +60,7 @@ dependencies {
 	modImplementation("com.terraformersmc:modmenu:${modmenu_version}")
 
 	modCompileOnly("dev.emi:emi-fabric:${emi_version}");
-	modCompileOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
+	modCompileOnly("maven.modrinth:jei:${jei_version}")
 	modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}");
 
 

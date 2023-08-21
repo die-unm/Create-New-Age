@@ -1,5 +1,6 @@
 package org.antarcticgardens.newage.compat.jei;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.compat.jei.ItemIcon;
 import com.simibubi.create.content.processing.recipe.ProcessingOutput;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
@@ -11,7 +12,6 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.antarcticgardens.newage.NewAgeBlocks;
 import org.antarcticgardens.newage.compat.RenderingUtil;
@@ -49,9 +49,10 @@ public class EnergisingJeiCategory implements IRecipeCategory<EnergisingRecipe> 
             }
 
             @Override
-            public void draw(GuiGraphics guiGraphics, int xOffset, int yOffset) {
+            public void draw(PoseStack poseStack, int i, int i1) {
 
             }
+
         };
     }
 
@@ -80,8 +81,9 @@ public class EnergisingJeiCategory implements IRecipeCategory<EnergisingRecipe> 
     }
 
     @Override
-    public void draw(EnergisingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
-        AllGuiTextures.JEI_ARROW.render(guiGraphics, 31, 8);
-        RenderingUtil.drawCenteredStringWithoutShadow(guiGraphics, Minecraft.getInstance().font, Component.literal(StringFormattingTool.formatLong(recipe.energyNeeded) + " ⚡"), 50, 18, 0x1166ff);
+    public void draw(EnergisingRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack stack, double mouseX, double mouseY) {
+        AllGuiTextures.JEI_ARROW.render(stack, 31, 8);
+        RenderingUtil.drawCenteredStringWithoutShadow(stack, Minecraft.getInstance().font, Component.literal(StringFormattingTool.formatLong(recipe.energyNeeded) + " ⚡"), 50, 18, 0x1166ff);
     }
+
 }

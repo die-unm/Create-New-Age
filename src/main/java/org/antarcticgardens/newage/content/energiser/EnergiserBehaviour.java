@@ -9,8 +9,8 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-import org.joml.Math;
 
 import java.util.List;
 import java.util.Optional;
@@ -87,7 +87,7 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
             sinceUpdate--;
             if (sinceUpdate <= 0) {
                 needed = 0;
-                be.getEnergyStorage().internalInsert(charged, false);
+                be.getEnergyStorage().insertEnergy(charged, false);
                 charged = 0;
                 currentRecipe = null;
                 blockEntity.sendData();
@@ -105,9 +105,9 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
 
         if (be.getLevel().isClientSide()) {
             be.size -= 0.15f;
-            be.size = Math.clamp(0, 1, be.size);
+            be.size = Mth.clamp(be.size, 0, 1);
             if (needed > 0 && charged > 0) {
-                be.size = (float) Math.lerp(be.size, (float) charged / needed, 0.6);
+                be.size = (float) Mth.lerp(0.6, be.size, (float) charged / needed);
             } else if(shouldCreateParticles) {
                 shouldCreateParticles = false;
                 var rand = be.getLevel().getRandom();

@@ -6,6 +6,7 @@ import net.minecraft.world.item.Item;
 import org.antarcticgardens.newage.content.electricity.wire.ElectricWireItem;
 
 import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
+import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE_UNTABBED;
 
 public class NewAgeItems {
     public static final ItemEntry<Item> OVERCHARGED_GOLD =
@@ -32,23 +33,19 @@ public class NewAgeItems {
                     .register();
 
     public static final ItemEntry<SequencedAssemblyItem> INCOMPLETE_FUEL =
-            REGISTRATE.item("incomplete_fuel", SequencedAssemblyItem::new)
-                    .removeTab(CreateNewAge.CREATIVE_TAB_KEY)
+            REGISTRATE_UNTABBED.item("incomplete_fuel", SequencedAssemblyItem::new)
                     .register();
 
     public static final ItemEntry<SequencedAssemblyItem> INCOMPLETE_CASING =
-            REGISTRATE.item("incomplete_casing", SequencedAssemblyItem::new)
-                    .removeTab(CreateNewAge.CREATIVE_TAB_KEY)
+            REGISTRATE_UNTABBED.item("incomplete_casing", SequencedAssemblyItem::new)
                     .register();
 
     public static final ItemEntry<SequencedAssemblyItem> INCOMPLETE_WIRE =
-            REGISTRATE.item("incomplete_wire", SequencedAssemblyItem::new)
-                    .removeTab(CreateNewAge.CREATIVE_TAB_KEY)
+            REGISTRATE_UNTABBED.item("incomplete_wire", SequencedAssemblyItem::new)
                     .register();
 
     public static final ItemEntry<SequencedAssemblyItem> INCOMPLETE_ENCHANTED_GOLDEN_APPLE =
-            REGISTRATE.item("incomplete_enchanted_golden_apple", SequencedAssemblyItem::new)
-                    .removeTab(CreateNewAge.CREATIVE_TAB_KEY)
+            REGISTRATE_UNTABBED.item("incomplete_enchanted_golden_apple", SequencedAssemblyItem::new)
                     .register();
 
 

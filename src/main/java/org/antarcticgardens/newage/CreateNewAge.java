@@ -7,15 +7,12 @@ import com.simibubi.create.foundation.data.CreateRegistrate;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
@@ -26,7 +23,6 @@ import org.antarcticgardens.newage.tools.RecipeTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.antarcticgardens.newage.content.heat.heater.HeaterBlock.STRENGTH;
 
 public class CreateNewAge implements ModInitializer {
@@ -35,15 +31,14 @@ public class CreateNewAge implements ModInitializer {
 	public static final String MOD_ID = "create_new_age";
 
 	public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(MOD_ID);
+	public static final CreateRegistrate REGISTRATE_UNTABBED = CreateRegistrate.create(MOD_ID);
 
-	public static final ResourceKey<CreativeModeTab> CREATIVE_TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB,
-			new ResourceLocation(MOD_ID, "tab"));
+
+	public static final CreativeModeTab CREATIVE_TAB = FabricItemGroupBuilder.build(new ResourceLocation(MOD_ID, "tab"), NewAgeBlocks.ENERGISER_T1::asStack);
 
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Hello 1.20.1 Create!");
-
-		registerCreativeTab();
 
 		NewAgeBlocks.load();
 		NewAgeBlockEntityTypes.load();
@@ -56,8 +51,8 @@ public class CreateNewAge implements ModInitializer {
 
 		EnergisingRecipe.type = RecipeTool.createIRecipeTypeInfo("energising", new ProcessingRecipeSerializer<>(EnergisingRecipe::new));
 
-		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Decoration.UNDERGROUND_ORES, ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation("create_new_age","ore_thorium")));
-		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Decoration.UNDERGROUND_ORES, ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation("create_new_age","magnetite")));
+		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Decoration.UNDERGROUND_ORES, ResourceKey.create(Registry.FEATURE_REGISTRY.registry(), new ResourceLocation("create_new_age","ore_thorium")));
+		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Decoration.UNDERGROUND_ORES, ResourceKey.create(Registry.FEATURE_REGISTRY.registry(), new ResourceLocation("create_new_age","magnetite")));
 
 		ContraptionMovementSetting.register(NewAgeBlocks.ELECTRICAL_CONNECTOR.get(), () -> ContraptionMovementSetting.UNMOVABLE);
 
@@ -68,15 +63,6 @@ public class CreateNewAge implements ModInitializer {
 		}
 
 		ModContainer modContainer = containerContainer.get();
-		ResourceManagerHelper.registerBuiltinResourcePack(new ResourceLocation(MOD_ID, "create_new_age_monkey_edition"), modContainer, Component.translatable("create_new_age.monkey_edition"), ResourcePackActivationType.NORMAL);
-	}
-
-	private void registerCreativeTab() {
-		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,
-				new ResourceLocation(MOD_ID, "tab"),
-				FabricItemGroup.builder()
-						.icon(NewAgeBlocks.ENERGISER_T1::asStack)
-						.title(Component.translatable("tab." + MOD_ID + ".tab"))
-						.build());
+		ResourceManagerHelper.registerBuiltinResourcePack(new ResourceLocation(MOD_ID, "create_new_age_monkey_edition"), modContainer, "Create: New Age (Monkey Edition)", ResourcePackActivationType.NORMAL);
 	}
 }

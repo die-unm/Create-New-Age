@@ -126,7 +126,7 @@ public class ReactorPonder {
 
         for (int i = 0 ; i < 3 ; i++) {
             scene.idle(20);
-            scene.world.modifyEntity(ent, entity -> entity.animateHurt(0));
+            scene.world.modifyEntity(ent, Entity::animateHurt);
         }
 
         for (int i = 0 ; i < 5 ; i++) {

@@ -2,7 +2,7 @@ package org.antarcticgardens.newage.content.reactor;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -22,8 +22,8 @@ import org.antarcticgardens.newage.tools.RaycastUtil;
 import java.util.List;
 
 public class NuclearUtil {
-    public static final TagKey<Block> STOPS_RADIATION = new TagKey<>(Registries.BLOCK, new ResourceLocation(CreateNewAge.MOD_ID, "stops_radiation"));
-    public static final TagKey<Item> HAZMAT_SUIT = new TagKey<>(Registries.ITEM, new ResourceLocation(CreateNewAge.MOD_ID, "nuclear/hazmat_suit"));
+    public static final TagKey<Block> STOPS_RADIATION = new TagKey<>(Registry.BLOCK_REGISTRY, new ResourceLocation(CreateNewAge.MOD_ID, "stops_radiation"));
+    public static final TagKey<Item> HAZMAT_SUIT = new TagKey<>(Registry.ITEM_REGISTRY, new ResourceLocation(CreateNewAge.MOD_ID, "nuclear/hazmat_suit"));
 
     public static void createRadiation(int length, Level world, BlockPos pos) {
         if (world.isClientSide())
@@ -37,7 +37,7 @@ public class NuclearUtil {
                 if (world.getBlockState(pos.relative(dir)).is(STOPS_RADIATION))
                     continue;
 
-                Vec3 start = pos.getCenter().relative(dir, 0.5f);
+                Vec3 start = new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5).relative(dir, 0.5);
                 double distance = le.getEyePosition().distanceTo(start);
 
                 if (distance > length)

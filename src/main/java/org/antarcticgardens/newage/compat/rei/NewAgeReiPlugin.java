@@ -77,7 +77,7 @@ public class NewAgeReiPlugin implements REIClientPlugin {
 
         registry.add(energisingCategory);
 
-        registry.addWorkstations(identifier, EntryStacks.of(NewAgeBlocks.ENERGISER_T1), EntryStacks.of(NewAgeBlocks.ENERGISER_T2), EntryStacks.of(NewAgeBlocks.ENERGISER_T3));
+        registry.addWorkstations(identifier, EntryStacks.of(NewAgeBlocks.ENERGISER_T1.asStack()), EntryStacks.of(NewAgeBlocks.ENERGISER_T2.asStack()), EntryStacks.of(NewAgeBlocks.ENERGISER_T3.asStack()));
     }
 
     @Override

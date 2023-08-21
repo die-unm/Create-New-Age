@@ -2,7 +2,6 @@ package org.antarcticgardens.newage.tools;
 
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -13,7 +12,7 @@ import static org.antarcticgardens.newage.CreateNewAge.MOD_ID;
 public class RecipeTool {
     public static <S extends RecipeSerializer<?>> IRecipeTypeInfo createIRecipeTypeInfo(String name, S serializer) {
         RecipeType<?> type = RecipeType.register(name);
-        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(MOD_ID, name), serializer);
+        Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation(MOD_ID, name), serializer);
 
         return new IRecipeTypeInfo() {
             @Override

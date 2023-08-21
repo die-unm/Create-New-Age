@@ -4,15 +4,16 @@ import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.utility.Lang;
-import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
-import earth.terrarium.botarium.common.energy.impl.ExtractOnlyEnergyContainer;
-import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
-import earth.terrarium.botarium.common.energy.util.EnergyHooks;
+import earth.terrarium.botarium.api.energy.EnergyBlock;
+import earth.terrarium.botarium.api.energy.EnergyHooks;
+import earth.terrarium.botarium.api.energy.ExtractOnlyEnergyContainer;
+import earth.terrarium.botarium.api.energy.StatefulEnergyContainer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.antarcticgardens.newage.config.NewAgeConfig;
@@ -22,15 +23,15 @@ import org.antarcticgardens.newage.tools.StringFormattingTool;
 
 import java.util.List;
 
-public class CarbonBrushesBlockEntity extends KineticBlockEntity implements BotariumEnergyBlock<WrappedBlockEnergyContainer>, IHaveGoggleInformation {
-    private final WrappedBlockEnergyContainer energyContainer;
+public class CarbonBrushesBlockEntity extends KineticBlockEntity implements EnergyBlock, IHaveGoggleInformation {
+    private final ExtractOnlyEnergyContainer energyContainer;
 
     private int lastOutput = 0;
 
     public CarbonBrushesBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
 
-        energyContainer = new WrappedBlockEnergyContainer(this, new ExtractOnlyEnergyContainer(25000));
+        energyContainer = new ExtractOnlyEnergyContainer(this, 25000);
 
         setLazyTickRate(20);
     }
@@ -114,7 +115,12 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
     }
 
     @Override
-    public WrappedBlockEnergyContainer getEnergyStorage() {
+    public StatefulEnergyContainer<BlockEntity> getEnergyStorage() {
         return energyContainer;
+    }
+
+    @Override
+    public void update() {
+
     }
 }

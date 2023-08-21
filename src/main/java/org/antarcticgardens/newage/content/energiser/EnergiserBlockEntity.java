@@ -3,12 +3,13 @@ package org.antarcticgardens.newage.content.energiser;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.Lang;
-import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
-import earth.terrarium.botarium.common.energy.impl.SimpleEnergyContainer;
-import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
+import earth.terrarium.botarium.api.energy.EnergyBlock;
+import earth.terrarium.botarium.api.energy.InsertOnlyEnergyContainer;
+import earth.terrarium.botarium.api.energy.StatefulEnergyContainer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -17,8 +18,8 @@ import org.antarcticgardens.newage.tools.StringFormattingTool;
 
 import java.util.List;
 
-public class EnergiserBlockEntity extends KineticBlockEntity implements BotariumEnergyBlock<WrappedBlockEnergyContainer> {
-    public WrappedBlockEnergyContainer energy;
+public class EnergiserBlockEntity extends KineticBlockEntity implements EnergyBlock {
+    public InsertOnlyEnergyContainer energy;
 
     public int tier;
     public float size = 0f;
@@ -26,8 +27,8 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
 
     public EnergiserBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int tier) {
         super(type, pos, state);
-        energy = new WrappedBlockEnergyContainer(
-                this, new SimpleEnergyContainer(EnergiserBlock.getCapacity(tier)));
+        energy = new InsertOnlyEnergyContainer(
+                this, EnergiserBlock.getCapacity(tier));
         this.tier = tier;
         this.energisingBehaviour.tier = tier;
     }
@@ -79,7 +80,13 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
     }
 
     @Override
-    public WrappedBlockEnergyContainer getEnergyStorage() {
+    public StatefulEnergyContainer getEnergyStorage() {
         return energy;
+    }
+
+    @Override
+    public void update() {
+        this.setChanged();
+        this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
     }
 }
