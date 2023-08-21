@@ -9,7 +9,13 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.PathPackResources;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraftforge.event.AddPackFindersEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -20,6 +26,8 @@ import org.antarcticgardens.newage.content.energiser.EnergisingRecipe;
 import org.antarcticgardens.newage.tools.RecipeTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.file.Path;
 
 import static org.antarcticgardens.newage.content.heat.heater.HeaterBlock.STRENGTH;
 
@@ -63,6 +71,7 @@ public class CreateNewAge {
 		NewAgeConfig.getCommon();
 
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::generalSetup);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerDatapack);
 
 		RecipeTool.register_type.register(modBus);
 		RecipeTool.register.register(modBus);
@@ -71,6 +80,23 @@ public class CreateNewAge {
 			ENERGISING_RECIPE_TYPE = RecipeTool.createIRecipeTypeInfo("energising", new ProcessingRecipeSerializer<>(EnergisingRecipe::new));
 		} catch (Exception e) {
 			LOGGER.error("Exception", e);
+		}
+
+	}
+
+	public void registerDatapack(final AddPackFindersEvent event) {
+		if (event.getPackType() == PackType.SERVER_DATA) {
+			Path resourcePath = ModList.get().getModFileById("create_new_age").getFile().findResource("resourcepacks/create_new_age_monkey_edition");
+			Pack builtinDataPack = Pack.readMetaAndCreate(
+					"builtin/create_new_age_monkey_edition",
+					Component.translatable("create_new_age.monkey_edition"),
+					false,
+					(a) -> new PathPackResources(a, resourcePath, false),
+					PackType.SERVER_DATA,
+					Pack.Position.BOTTOM,
+					PackSource.FEATURE);
+
+			 event.addRepositorySource((packConsumer) -> packConsumer.accept(builtinDataPack));
 		}
 	}
 
