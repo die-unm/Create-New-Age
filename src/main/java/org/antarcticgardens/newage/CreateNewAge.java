@@ -89,7 +89,7 @@ public class CreateNewAge {
 		if (event.getPackType() == PackType.SERVER_DATA) {
 			Path path = ModList.get().getModFileById("create_new_age").getFile().findResource("resourcepacks/create_new_age_monkey_edition");
 			Pack builtinDataPack = Pack.readMetaAndCreate(
-					"create_new_age_monkey_edition",
+					"create_new_age:create_new_age_monkey_edition",
 					Component.translatable("create_new_age.monkey_edition"),
 					false,
 					(a) -> new PathPackResources(a, path, false),
