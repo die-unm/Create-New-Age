@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.antarcticgardens.newage.NewAgeBlocks;
+import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.heat.HeatBlockEntity;
 import org.antarcticgardens.newage.content.reactor.NuclearUtil;
 import org.jetbrains.annotations.Nullable;
@@ -24,10 +25,12 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
     int twoSeconds = 0;
     private boolean working;
     public void tick(BlockPos pos, Level world, BlockState state) {
-        if (this.heat > 16000) {
-            heat-=25;
+        var common = NewAgeConfig.getCommon();
+        double multiplier = common.overheatingMultiplier.get();
+        if (multiplier > 0 && this.heat > 16000*multiplier) {
+            heat-=common.nuclearReactorRodHeatLoss.get();
             setChanged();
-            if (this.heat > 24000) {
+            if (this.heat > 24000*multiplier) {
                 world.setBlock(pos, NewAgeBlocks.CORIUM.getDefaultState(), 3);
             }
         }
@@ -47,7 +50,7 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
                 world.setBlock(pos, state.setValue(ReactorRodBlock.ACTIVE, true), 3);
                 working = true;
             }
-            heat+=30;
+            heat+=common.nuclearReactorRodHeat.get();
             setChanged();
         } else {
             if (working) {

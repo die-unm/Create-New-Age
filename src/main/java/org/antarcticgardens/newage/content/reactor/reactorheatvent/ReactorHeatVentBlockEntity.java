@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.heat.HeatBlockEntity;
 import org.antarcticgardens.newage.content.reactor.RodFindingReactorBlockEntity;
 import org.antarcticgardens.newage.content.reactor.reactorrod.ReactorRodBlockEntity;
@@ -80,7 +81,8 @@ public class ReactorHeatVentBlockEntity extends RodFindingReactorBlockEntity imp
     public void tick(BlockPos pos, Level world, BlockState state) {
         tick++;
         if (tick >= 20) {
-            if (heat > 16000) {
+            double multiplier = NewAgeConfig.getCommon().overheatingMultiplier.get();
+            if (multiplier > 0 && heat > 16000 * multiplier) {
                 world.setBlock(pos, Blocks.LAVA.defaultBlockState(), 3);
             }
             tick = 0;

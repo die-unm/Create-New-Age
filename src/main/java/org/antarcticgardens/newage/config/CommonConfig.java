@@ -10,6 +10,16 @@ public class CommonConfig {
     public final ForgeConfigSpec.ConfigValue<Integer> maxPathfindingDepth;
     public final ForgeConfigSpec.ConfigValue<Double> energiserSpeedMultiplier;
 
+    public final ForgeConfigSpec.ConfigValue<Double> overheatingMultiplier;
+
+    public final ForgeConfigSpec.ConfigValue<Double> nuclearReactorRodHeat;
+
+    public final ForgeConfigSpec.ConfigValue<Double> nuclearReactorRodHeatLoss;
+
+    public final ForgeConfigSpec.ConfigValue<Double> solarPanelHeatMultiplier;
+
+
+
     public CommonConfig(ForgeConfigSpec.Builder builder) {
         suToEnergy = builder
                 .comment(
@@ -36,5 +46,22 @@ public class CommonConfig {
         energiserSpeedMultiplier = builder
                 .comment("Multiplier of energising speed")
                 .define("energiserSpeedMultiplier", 1.0);
+
+        overheatingMultiplier = builder
+                .comment("Multiplier for the temperature at which components overheat. Set to less than 0 to disable overheating.")
+                .define("overheatingMultiplier", 1.0);
+
+        nuclearReactorRodHeat = builder
+                .comment("How much heat per tick a nuclear reactor rod generate.")
+                .define("ReactorRodHeat", 30.0);
+
+        nuclearReactorRodHeatLoss = builder
+                .comment("How much heat per tick a nuclear reactor rod looses above the 16000*overheatingMultiplier.")
+                .define("ReactorRodHeatLoss", 25.0);
+
+        solarPanelHeatMultiplier = builder
+                .comment("Multiplier for how much heat solar panels output.")
+                .define("solarPanelHeatMultiplier", 1.0);
+
     }
 }

@@ -12,9 +12,11 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.heat.HeatBlockEntity;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 import org.jetbrains.annotations.Nullable;
@@ -98,6 +100,13 @@ public class SolarHeatingPlateBlockEntity extends BlockEntity implements HeatBlo
 
 
     public void tick(BlockPos blockPos, Level world, BlockState blockState) {
+        var common = NewAgeConfig.getCommon();
+        double multiplier = common.overheatingMultiplier.get();
+        double generationMultiplier = common.solarPanelHeatMultiplier.get();
+        if (multiplier > 0 && heat > 60*energyPerSecond * multiplier * generationMultiplier) {
+            world.setBlock(blockPos, Blocks.LAVA.defaultBlockState(), 3);
+        }
+
         int dark = 0;
         if (world.isClientSide()) {
             // update sky could also work but this feels more right.
@@ -112,7 +121,7 @@ public class SolarHeatingPlateBlockEntity extends BlockEntity implements HeatBlo
         HeatBlockEntity.transferAround(this);
 
         float light = world.getBrightness(LightLayer.SKY, blockPos.above()) - dark;
-        last = Math.max((light/15f)*energyPerSecond - Math.max(0, heat - (20 * energyPerSecond)), 0);
+        last = (float) Math.max((light/15f)*energyPerSecond*generationMultiplier - Math.max(0, heat - (20 * energyPerSecond*generationMultiplier)), 0);
         addHeat(last);
     }
 }
