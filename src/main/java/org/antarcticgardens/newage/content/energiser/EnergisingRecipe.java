@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAssemblyRecipe {
-    public static JeiEnergisingSubCategory subCategory = new JeiEnergisingSubCategory();
+    public static JeiEnergisingSubCategory subCategory;
 
     public int energyNeeded;
     public EnergisingRecipe(ProcessingRecipeBuilder.ProcessingRecipeParams params) {
@@ -74,6 +74,9 @@ public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAs
 
     @Override
     public Supplier<Supplier<SequencedAssemblySubCategory>> getJEISubCategory() {
+        if (subCategory == null)
+            subCategory = new JeiEnergisingSubCategory();
+
         return () -> () -> subCategory;
     }
 
