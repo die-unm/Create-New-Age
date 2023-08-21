@@ -5,6 +5,7 @@ import com.simibubi.create.content.fluids.tank.BoilerHeaters;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeSerializer;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -86,17 +87,18 @@ public class CreateNewAge {
 
 	public void registerDatapack(final AddPackFindersEvent event) {
 		if (event.getPackType() == PackType.SERVER_DATA) {
-			Path resourcePath = ModList.get().getModFileById("create_new_age").getFile().findResource("resourcepacks/create_new_age_monkey_edition");
+			Path path = ModList.get().getModFileById("create_new_age").getFile().findResource("resourcepacks/create_new_age_monkey_edition");
 			Pack builtinDataPack = Pack.readMetaAndCreate(
 					"builtin/create_new_age_monkey_edition",
 					Component.translatable("create_new_age.monkey_edition"),
 					false,
-					(a) -> new PathPackResources(a, resourcePath, false),
+					(a) -> new PathPackResources(a, path, false),
 					PackType.SERVER_DATA,
-					Pack.Position.BOTTOM,
-					PackSource.FEATURE);
+					Pack.Position.TOP,
+					PackSource.create((arg) -> Component.translatable("pack.nameAndSource", arg, Component.translatable("pack.source.builtin")).withStyle(ChatFormatting.GRAY), false)
+			);
 
-			 event.addRepositorySource((packConsumer) -> packConsumer.accept(builtinDataPack));
+			event.addRepositorySource((packConsumer) -> packConsumer.accept(builtinDataPack));
 		}
 	}
 
