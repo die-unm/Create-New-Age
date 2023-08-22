@@ -1,4 +1,4 @@
-package org.antarcticgardens.newage;
+package org.antarcticgardens.newage.energy;
 
 import earth.terrarium.botarium.Botarium;
 import earth.terrarium.botarium.common.energy.base.EnergyContainer;
@@ -7,20 +7,26 @@ import earth.terrarium.botarium.common.energy.impl.SimpleEnergySnapshot;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 
-public class SimpleInsertOnlyMutableContainer implements EnergyContainer {
-    public void setCapacity(long capacity) {
-        this.capacity = capacity;
-    }
-
+public class InsertOnlyResizableEnergyContainer implements EnergyContainer {
     private long capacity;
     private long energy;
 
-    public SimpleInsertOnlyMutableContainer(long maxCapacity) {
+    public InsertOnlyResizableEnergyContainer(long maxCapacity) {
         this.capacity = maxCapacity;
     }
 
     @Override
     public long insertEnergy(long maxAmount, boolean simulate) {
+        return internalInsert(maxAmount, simulate);
+    }
+
+    @Override
+    public long extractEnergy(long maxAmount, boolean simulate) {
+        return 0;
+    }
+
+    @Override
+    public long internalInsert(long maxAmount, boolean simulate) {
         long inserted = (long) Mth.clamp(maxAmount, 0, getMaxCapacity() - getStoredEnergy());
         if (simulate) return inserted;
         this.setEnergy(this.energy + inserted);
@@ -28,21 +34,11 @@ public class SimpleInsertOnlyMutableContainer implements EnergyContainer {
     }
 
     @Override
-    public long extractEnergy(long maxAmount, boolean simulate) {
+    public long internalExtract(long maxAmount, boolean simulate) {
         long extracted = (long) Mth.clamp(maxAmount, 0, getStoredEnergy());
         if (simulate) return extracted;
         this.setEnergy(this.energy - extracted);
         return extracted;
-    }
-
-    @Override
-    public long internalInsert(long maxAmount, boolean simulate) {
-        return insertEnergy(maxAmount, simulate);
-    }
-
-    @Override
-    public long internalExtract(long maxAmount, boolean simulate) {
-        return extractEnergy(maxAmount, simulate);
     }
 
     @Override
@@ -53,6 +49,10 @@ public class SimpleInsertOnlyMutableContainer implements EnergyContainer {
     @Override
     public long getStoredEnergy() {
         return energy;
+    }
+
+    public void setMaxCapacity(long capacity) {
+        this.capacity = capacity;
     }
 
     @Override

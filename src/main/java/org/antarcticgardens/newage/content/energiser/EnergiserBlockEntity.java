@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.antarcticgardens.newage.SimpleInsertOnlyMutableContainer;
+import org.antarcticgardens.newage.energy.InsertOnlyResizableEnergyContainer;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
     public int tier;
     public float size = 0f;
     private EnergiserBehaviour energisingBehaviour;
-    private SimpleInsertOnlyMutableContainer mut;
+    private InsertOnlyResizableEnergyContainer mut;
 
     public EnergiserBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int tier) {
         super(type, pos, state);
@@ -32,7 +32,7 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
         if (mut == null) {
             getOrCreateNetwork();
         }
-        mut.setCapacity((long) (Math.pow(10, tier) * 1000));
+        mut.setMaxCapacity((long) (Math.pow(10, tier) * 1000));
     }
 
     protected AABB createRenderBoundingBox() {
@@ -83,6 +83,6 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
 
     @Override
     public WrappedBlockEnergyContainer getEnergyStorage() {
-        return energy == null ? energy = new WrappedBlockEnergyContainer(this, mut = new SimpleInsertOnlyMutableContainer(0)) : energy;
+        return energy == null ? energy = new WrappedBlockEnergyContainer(this, mut = new InsertOnlyResizableEnergyContainer(0)) : energy;
     }
 }
