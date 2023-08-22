@@ -35,6 +35,15 @@ loom {
 	}
 }
 
+configurations.configureEach {
+	resolutionStrategy.eachDependency {
+		if (requested.module.name == "fabric-loader") {
+			useVersion(loader_version)
+		}
+	}
+}
+
+
 dependencies {
 	minecraft("com.mojang:minecraft:${minecraft_version}")
 	mappings(loom.layered {
@@ -49,6 +58,8 @@ dependencies {
 
 	// Oh great create
 	modImplementation("com.simibubi.create:create-fabric-${minecraft_version}:${create_version}")
+	modImplementation("com.github.AlphaMode:fakeconfig:master-SNAPSHOT") { exclude(group: "net.fabricmc.fabric-api") }
+	modImplementation("com.github.AlphaMode:fakeconfigtoml:master-SNAPSHOT") { exclude(group: "net.fabricmc.fabric-api") }
 
 	// Botarium for energy API
 	modImplementation "earth.terrarium:botarium-common-${minecraft_version}:${botarium_version}"
