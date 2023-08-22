@@ -5,7 +5,8 @@
 	"mixins": [
 		"TransactionImplMixin",
 		"FabricBlockEnergyContainerMixin",
-		"LevelMixin"
+		"LevelMixin",
+		"Matrix4fMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
