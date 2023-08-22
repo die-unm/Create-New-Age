@@ -1,4 +1,4 @@
-package org.antarcticgardens.newage;
+package org.antarcticgardens.newage.energy;
 
 import earth.terrarium.botarium.Botarium;
 import earth.terrarium.botarium.api.Updatable;
@@ -12,15 +12,11 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-public class SimpleInsertOnlyMutableContainer extends InsertOnlyEnergyContainer {
-    public void setCapacity(long capacity) {
-        this.capacity = capacity;
-    }
-
+public class InsertOnlyResizableEnergyContainer extends InsertOnlyEnergyContainer {
     private long capacity;
     private long energy;
 
-    public SimpleInsertOnlyMutableContainer(Updatable entity, long maxCapacity) {
+    public InsertOnlyResizableEnergyContainer(Updatable entity, long maxCapacity) {
         super(entity, maxCapacity);
         this.capacity = maxCapacity;
     }
@@ -59,6 +55,10 @@ public class SimpleInsertOnlyMutableContainer extends InsertOnlyEnergyContainer 
     @Override
     public long getStoredEnergy() {
         return energy;
+    }
+
+    public void setMaxCapacity(long capacity) {
+        this.capacity = capacity;
     }
 
     @Override

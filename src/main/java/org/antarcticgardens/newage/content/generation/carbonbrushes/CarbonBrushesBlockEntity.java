@@ -6,32 +6,29 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.utility.Lang;
 import earth.terrarium.botarium.api.energy.EnergyBlock;
 import earth.terrarium.botarium.api.energy.EnergyHooks;
-import earth.terrarium.botarium.api.energy.ExtractOnlyEnergyContainer;
-import earth.terrarium.botarium.api.energy.StatefulEnergyContainer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlock;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlockEntity;
+import org.antarcticgardens.newage.energy.ExtractOnlyResizableEnergyContainer;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 
 import java.util.List;
 
 public class CarbonBrushesBlockEntity extends KineticBlockEntity implements EnergyBlock, IHaveGoggleInformation {
-    private ExtractOnlyEnergyContainer energyContainer;
+    private ExtractOnlyResizableEnergyContainer energyContainer;
 
     private int lastOutput = 0;
 
     public CarbonBrushesBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-
         setLazyTickRate(20);
     }
 
@@ -52,14 +49,6 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Ener
         Lang.translate("tooltip.create_new_age.energy_stats")
                 .style(ChatFormatting.WHITE).forGoggles(tooltip);
 
-        Lang.translate("tooltip.create_new_age.energy_stored")
-                .style(ChatFormatting.GRAY)
-                .forGoggles(tooltip);
-
-        Lang.translate("tooltip.create_new_age.energy_storage", StringFormattingTool.formatLong(energyContainer.getStoredEnergy()), StringFormattingTool.formatLong(energyContainer.getMaxCapacity()))
-                .style(ChatFormatting.AQUA)
-                .forGoggles(tooltip, 1);
-
         Lang.translate("tooltip.create_new_age.energy_output")
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
@@ -78,6 +67,8 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Ener
         super.tick();
         if (level == null || level.isClientSide) return;
         Direction facing = getBlockState().getValue(DirectionalKineticBlock.FACING);
+
+        energyContainer.setMaxCapacity(lastOutput * 20L);
 
         int coilsLeft = NewAgeConfig.getCommon().maxCoils.get();
         lastOutput = 0;
@@ -115,9 +106,9 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Ener
     }
 
     @Override
-    public earth.terrarium.botarium.api.energy.ExtractOnlyEnergyContainer getEnergyStorage() {
+    public ExtractOnlyResizableEnergyContainer getEnergyStorage() {
         if (energyContainer == null)
-            energyContainer = new ExtractOnlyEnergyContainer(this, 25000);
+            energyContainer = new ExtractOnlyResizableEnergyContainer(this, 0);
 
         return energyContainer;
     }

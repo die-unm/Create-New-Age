@@ -4,17 +4,15 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.Lang;
 import earth.terrarium.botarium.api.energy.EnergyBlock;
-import earth.terrarium.botarium.api.energy.StatefulEnergyContainer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.antarcticgardens.newage.SimpleInsertOnlyMutableContainer;
+import org.antarcticgardens.newage.energy.InsertOnlyResizableEnergyContainer;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 
 import java.util.List;
@@ -23,7 +21,7 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements EnergyBl
     public int tier;
     public float size = 0f;
     private EnergiserBehaviour energisingBehaviour;
-    private SimpleInsertOnlyMutableContainer energy;
+    private InsertOnlyResizableEnergyContainer energy;
 
     public EnergiserBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int tier) {
         super(type, pos, state);
@@ -33,7 +31,7 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements EnergyBl
         if (energy == null)
             getOrCreateNetwork();
 
-        energy.setCapacity((long) (Math.pow(10, tier) * 1000));
+        energy.setMaxCapacity((long) (Math.pow(10, tier) * 1000));
     }
 
     protected AABB createRenderBoundingBox() {
@@ -83,9 +81,9 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements EnergyBl
     }
 
     @Override
-    public SimpleInsertOnlyMutableContainer getEnergyStorage() {
+    public InsertOnlyResizableEnergyContainer getEnergyStorage() {
         if (energy == null)
-            energy = new SimpleInsertOnlyMutableContainer(this, 0);
+            energy = new InsertOnlyResizableEnergyContainer(this, 0);
 
         return energy;
     }

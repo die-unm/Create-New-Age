@@ -15,8 +15,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.antarcticgardens.newage.CreateNewAge;
 import org.antarcticgardens.newage.content.reactor.RodFindingReactorBlockEntity;
 import org.antarcticgardens.newage.content.reactor.reactorrod.ReactorRodBlockEntity;
@@ -29,6 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ReactorFuelAcceptorBlockEntity extends RodFindingReactorBlockEntity implements Container {
     public static final TagKey<Item> fuel = ItemTags.create(new ResourceLocation(CreateNewAge.MOD_ID, "nuclear/is_nuclear_fuel"));
+    private LazyOptional<IItemHandlerModifiable> chestHandler;
 
     public ReactorFuelAcceptorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
@@ -106,6 +113,28 @@ public class ReactorFuelAcceptorBlockEntity extends RodFindingReactorBlockEntity
     }
 
     int ticks = 0;
+
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
+        if (!this.remove && cap == ForgeCapabilities.ITEM_HANDLER) {
+            if (this.chestHandler == null) {
+                this.chestHandler = LazyOptional.of(this::createHandler);
+            }
+
+            return this.chestHandler.cast();
+        } else {
+            return super.getCapability(cap, side);
+        }
+    }
+
+    private IItemHandlerModifiable createHandler() {
+        BlockState state = this.getBlockState();
+        if (!(state.getBlock() instanceof ChestBlock)) {
+            return new InvWrapper(this);
+        } else {
+            Container inv = ChestBlock.getContainer((ChestBlock)state.getBlock(), state, this.getLevel(), this.getBlockPos(), true);
+            return new InvWrapper(inv == null ? this : inv);
+        }
+    }
 
     public void tick(BlockPos pos, Level world, BlockState state) {
         ticks--;

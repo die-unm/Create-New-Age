@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.antarcticgardens.newage.SimpleInsertOnlyMutableContainer;
+import org.antarcticgardens.newage.energy.InsertOnlyResizableEnergyContainer;
 import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 
@@ -45,7 +45,8 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements En
 
     private float speed = 0;
     private float stress = 0;
-    private SimpleInsertOnlyMutableContainer energy;
+
+    private InsertOnlyResizableEnergyContainer energy;
 
     public MotorBlockEntity(BlockEntityType<?> arg, BlockPos arg2, BlockState arg3, long maxCapacity, float stressImpact, float maxSpeed) {
         super(arg, arg2, arg3);
@@ -55,7 +56,8 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements En
         if (energy == null) {
             getOrCreateNetwork();
         }
-        energy.setCapacity(maxCapacity);
+
+        energy.setMaxCapacity(maxCapacity);
         speedBehavior.between((int) -maxSpeed, (int) maxSpeed);
     }
 
@@ -249,9 +251,9 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements En
     }
 
     @Override
-    public InsertOnlyEnergyContainer getEnergyStorage() {
+    public InsertOnlyResizableEnergyContainer getEnergyStorage() {
         if (energy == null)
-            energy = new SimpleInsertOnlyMutableContainer(this, maxCapacity);
+            energy = new InsertOnlyResizableEnergyContainer(this, maxCapacity);
 
         return energy;
     }
