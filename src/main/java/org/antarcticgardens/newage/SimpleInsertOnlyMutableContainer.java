@@ -1,13 +1,18 @@
 package org.antarcticgardens.newage;
 
 import earth.terrarium.botarium.Botarium;
+import earth.terrarium.botarium.api.Updatable;
+import earth.terrarium.botarium.api.energy.InsertOnlyEnergyContainer;
+import earth.terrarium.botarium.api.energy.StatefulEnergyContainer;
 import earth.terrarium.botarium.common.energy.base.EnergyContainer;
 import earth.terrarium.botarium.common.energy.base.EnergySnapshot;
 import earth.terrarium.botarium.common.energy.impl.SimpleEnergySnapshot;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
-public class SimpleInsertOnlyMutableContainer implements EnergyContainer {
+public class SimpleInsertOnlyMutableContainer extends InsertOnlyEnergyContainer {
     public void setCapacity(long capacity) {
         this.capacity = capacity;
     }
@@ -15,34 +20,35 @@ public class SimpleInsertOnlyMutableContainer implements EnergyContainer {
     private long capacity;
     private long energy;
 
-    public SimpleInsertOnlyMutableContainer(long maxCapacity) {
+    public SimpleInsertOnlyMutableContainer(Updatable entity, long maxCapacity) {
+        super(entity, maxCapacity);
         this.capacity = maxCapacity;
     }
 
     @Override
     public long insertEnergy(long maxAmount, boolean simulate) {
-        long inserted = (long) Mth.clamp(maxAmount, 0, getMaxCapacity() - getStoredEnergy());
+        return internalInsert(maxAmount, simulate);
+    }
+
+    @Override
+    public long extractEnergy(long maxAmount, boolean simulate) {
+        return 0;
+    }
+
+    @Override
+    public long internalInsert(long maxAmount, boolean simulate) {
+        long inserted = Mth.clamp(maxAmount, 0, getMaxCapacity() - getStoredEnergy());
         if (simulate) return inserted;
         this.setEnergy(this.energy + inserted);
         return inserted;
     }
 
     @Override
-    public long extractEnergy(long maxAmount, boolean simulate) {
-        long extracted = (long) Mth.clamp(maxAmount, 0, getStoredEnergy());
+    public long internalExtract(long maxAmount, boolean simulate) {
+        long extracted = Mth.clamp(maxAmount, 0, getStoredEnergy());
         if (simulate) return extracted;
         this.setEnergy(this.energy - extracted);
         return extracted;
-    }
-
-    @Override
-    public long internalInsert(long maxAmount, boolean simulate) {
-        return insertEnergy(maxAmount, simulate);
-    }
-
-    @Override
-    public long internalExtract(long maxAmount, boolean simulate) {
-        return extractEnergy(maxAmount, simulate);
     }
 
     @Override
@@ -92,15 +98,5 @@ public class SimpleInsertOnlyMutableContainer implements EnergyContainer {
     @Override
     public boolean allowsExtraction() {
         return false;
-    }
-
-    @Override
-    public EnergySnapshot createSnapshot() {
-        return new SimpleEnergySnapshot(this);
-    }
-
-    @Override
-    public void clearContent() {
-        this.energy = 0;
     }
 }

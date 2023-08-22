@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[46,)"
+loaderVersion="[43,)"
 
 license="BSD-3-Clause"
 issueTrackerURL="https://github.com/MinecraftForge/MinecraftForge/issues"
@@ -18,27 +18,27 @@ displayURL="http://antarcticgardens.org/"
 [[dependencies.create_new_age]]
 modId="forge"
 mandatory=true
-versionRange="[46,)"
+versionRange="[43,)"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.create_new_age]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.20.1]"
+versionRange="[1.19.2]"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.create_new_age]]
 modId="botarium"
 mandatory=true
-versionRange="[2.2.0,)"
+versionRange="[1.8.2,)"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.create_new_age]]
 modId="create"
 mandatory=true
-versionRange="[0.5.1.d,)"
+versionRange="[0.5.1.b,)"
 ordering="NONE"
 side="BOTH"

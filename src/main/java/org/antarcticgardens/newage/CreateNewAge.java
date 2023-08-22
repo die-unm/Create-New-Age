@@ -5,13 +5,9 @@ import com.simibubi.create.content.fluids.tank.BoilerHeaters;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeSerializer;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.PathPackResources;
+import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.item.CreativeModeTab;
@@ -20,14 +16,15 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.resource.PathPackResources;
 import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.energiser.EnergisingRecipe;
 import org.antarcticgardens.newage.tools.RecipeTool;
+import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import static org.antarcticgardens.newage.content.heat.heater.HeaterBlock.STRENGTH;
@@ -41,19 +38,11 @@ public class CreateNewAge {
 	public static final CreateRegistrate BASE_REGISTRATE = CreateRegistrate.create(MOD_ID);
 
 
-	private static DeferredRegister<CreativeModeTab> TAB_REGISTRAR = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MOD_ID);
-	public static final RegistryObject<CreativeModeTab> tab = TAB_REGISTRAR.register("create_new_age_tab",
-			() -> CreativeModeTab.builder()
-					.title(Component.translatable("item_group." + MOD_ID + ".tab"))
-					.icon(NewAgeBlocks.ENERGISER_T1::asStack)
-					.build()
-			);
+	public static final CreativeModeTab CREATIVE_TAB = new NewAgeCreativeTab("create_new_age_tab");
 
-	public static final CreateRegistrate REGISTRATE = BASE_REGISTRATE.useCreativeTab(tab);
+	public static final CreateRegistrate REGISTRATE = BASE_REGISTRATE.creativeModeTab(() -> CREATIVE_TAB);
 
 
-	public static final ResourceKey<CreativeModeTab> CREATIVE_TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB,
-			new ResourceLocation(MOD_ID, "create_new_age_tab"));
 	public static IRecipeTypeInfo ENERGISING_RECIPE_TYPE;
 
 	public CreateNewAge() {
@@ -61,7 +50,6 @@ public class CreateNewAge {
 		LOGGER.info("Hello 1.20.1 Create!");
 
 		BASE_REGISTRATE.registerEventListeners(modBus);
-		TAB_REGISTRAR.register(modBus);
 
 		NewAgeBlocks.load();
 		NewAgeBlockEntityTypes.load();
@@ -86,21 +74,30 @@ public class CreateNewAge {
 	}
 
 	public void registerDatapack(final AddPackFindersEvent event) {
-		if (event.getPackType() == PackType.SERVER_DATA) {
-			Path path = ModList.get().getModFileById("create_new_age").getFile().findResource("resourcepacks/create_new_age_monkey_edition");
-			Pack builtinDataPack = Pack.readMetaAndCreate(
-					"create_new_age:create_new_age_monkey_edition",
-					Component.translatable("create_new_age.monkey_edition"),
-					false,
-					(a) -> new PathPackResources(a, path, false),
-					PackType.SERVER_DATA,
-					Pack.Position.TOP,
-					PackSource.create((arg) -> Component.translatable("pack.nameAndSource", arg, Component.translatable("pack.source.builtin")).withStyle(ChatFormatting.GRAY), false)
-			);
+		try {
+			if (event.getPackType() == PackType.SERVER_DATA) {
+				Path path = ModList.get().getModFileById(CreateNewAge.MOD_ID).getFile().findResource("resourcepacks/create_new_age_monkey_edition");
+				PathPackResources resources = new PathPackResources(CreateNewAge.MOD_ID, path);
+				PackMetadataSection section = resources.getMetadataSection(PackMetadataSection.SERIALIZER);
 
-			event.addRepositorySource((packConsumer) -> packConsumer.accept(builtinDataPack));
-		}
-	}
+				String name = "create_new_age:create_new_age_monkey_edition";
+				event.addRepositorySource((packConsumer, packConstructor) ->
+						packConsumer.accept(packConstructor.create(
+								name,
+								Component.translatable("create_new_age.monkey_edition"),
+								false,
+								() -> resources,
+								section,
+								Pack.Position.TOP,
+								PackSource.BUILT_IN,
+								false
+						))
+				);
+			}
+		} catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 	private void generalSetup(final FMLCommonSetupEvent event) {
 		event.enqueueWork(() -> {

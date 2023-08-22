@@ -22,6 +22,7 @@ repositories {
 	maven { url = "https://maven.jamieswhiteshirt.com/libs-release" } // Reach Entity Attributes
 	maven { url = "https://jitpack.io/" } // Mixin Extras, Fabric ASM
 	maven { url = "https://maven.tterrag.com/" } // Flywheel
+	maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
 	maven {
 		// Location of the maven that hosts Mine and Team Resourceful's files.
 		name = "Resourceful Bees Maven"
@@ -54,6 +55,9 @@ dependencies {
 	mappings loom.officialMojangMappings()
 
 	forge "net.minecraftforge:forge:${project.forge_version}"
+
+	forgeRuntimeLibrary "org.joml:joml:1.10.5"
+	implementation include("org.joml:joml:1.10.5")
 
 	// Oh great create
 	modImplementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }

@@ -3,7 +3,8 @@
 	"package": "org.antarcticgardens.newage.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"LevelMixin"
+		"LevelMixin",
+		"Matrix4fMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

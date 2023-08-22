@@ -95,7 +95,7 @@ public class EnergiserPonder {
 
 
     public static void nomGiveElectricity(EnergiserBlockEntity e) {
-        e.energy.insertEnergy(100000, false);
+        e.getEnergyStorage().insertEnergy(100000, false);
     }
 
     public static void progressEnergiser(EnergiserBlockEntity e) {

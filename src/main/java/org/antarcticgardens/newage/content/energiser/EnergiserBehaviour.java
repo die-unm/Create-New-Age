@@ -97,7 +97,7 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
         be.lastCharged = -1;
 
         if (needed > 0) {
-            be.lastCharged =  be.energy.internalExtract(
+            be.lastCharged =  be.getEnergyStorage().internalExtract(
                     (long) Math.min(EnergiserBlock.getStrength(tier) * (long) Math.abs(be.getSpeed() * 0.1),
                             needed - charged), false);
             charged += be.lastCharged;

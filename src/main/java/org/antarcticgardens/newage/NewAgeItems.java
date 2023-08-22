@@ -2,6 +2,7 @@ package org.antarcticgardens.newage;
 
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyItem;
 import com.tterrag.registrate.util.entry.ItemEntry;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import org.antarcticgardens.newage.content.electricity.wire.ElectricWireItem;
 
@@ -33,22 +34,22 @@ public class NewAgeItems {
 
     public static final ItemEntry<SequencedAssemblyItem> INCOMPLETE_FUEL =
             REGISTRATE.item("incomplete_fuel", SequencedAssemblyItem::new)
-                    .removeTab(CreateNewAge.CREATIVE_TAB_KEY)
+//                    .removeTab(CreateNewAge.CREATIVE_TAB_KEY)
                     .register();
 
     public static final ItemEntry<SequencedAssemblyItem> INCOMPLETE_CASING =
             REGISTRATE.item("incomplete_casing", SequencedAssemblyItem::new)
-                    .removeTab(CreateNewAge.CREATIVE_TAB_KEY)
+//                    .removeTab(CreateNewAge.CREATIVE_TAB_KEY)
                     .register();
 
     public static final ItemEntry<SequencedAssemblyItem> INCOMPLETE_WIRE =
             REGISTRATE.item("incomplete_wire", SequencedAssemblyItem::new)
-                    .removeTab(CreateNewAge.CREATIVE_TAB_KEY)
+//                    .removeTab(CreateNewAge.CREATIVE_TAB_KEY)
                     .register();
 
     public static final ItemEntry<SequencedAssemblyItem> INCOMPLETE_ENCHANTED_GOLDEN_APPLE =
             REGISTRATE.item("incomplete_enchanted_golden_apple", SequencedAssemblyItem::new)
-                    .removeTab(CreateNewAge.CREATIVE_TAB_KEY)
+//                    .removeTab(CreateNewAge.CREATIVE_TAB_KEY)
                     .register();
 
 

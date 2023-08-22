@@ -2,12 +2,12 @@ package org.antarcticgardens.newage.content.reactor.reactorfuelacceptor;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -28,8 +28,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ReactorFuelAcceptorBlockEntity extends RodFindingReactorBlockEntity implements Container {
-
-    public static final TagKey<Item> fuel = new TagKey<>(Registries.ITEM, new ResourceLocation(CreateNewAge.MOD_ID, "nuclear/is_nuclear_fuel"));
+    public static final TagKey<Item> fuel = ItemTags.create(new ResourceLocation(CreateNewAge.MOD_ID, "nuclear/is_nuclear_fuel"));
 
     public ReactorFuelAcceptorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);

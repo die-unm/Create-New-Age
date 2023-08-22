@@ -29,7 +29,7 @@ import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
 
 public class NewAgeBlocks {
     static {
-        REGISTRATE.defaultCreativeTab(CreateNewAge.CREATIVE_TAB_KEY);
+        REGISTRATE.creativeModeTab(() -> CreateNewAge.CREATIVE_TAB);
     }
 
     public static final BlockEntry<Block> ENERGISER_T1 =

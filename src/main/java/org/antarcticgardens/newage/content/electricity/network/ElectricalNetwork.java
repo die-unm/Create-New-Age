@@ -1,6 +1,6 @@
 package org.antarcticgardens.newage.content.electricity.network;
 
-import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
+import earth.terrarium.botarium.api.energy.EnergyBlock;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class ElectricalNetwork {
     private final List<ElectricalConnectorBlockEntity> nodes = new ArrayList<>();
-    private final Map<ElectricalConnectorBlockEntity, BotariumEnergyBlock<?>> consumers = new HashMap<>();
+    private final Map<ElectricalConnectorBlockEntity, EnergyBlock> consumers = new HashMap<>();
 
     private final ElectricalNetworkPathManager pathManager = new ElectricalNetworkPathManager();
 
@@ -53,7 +53,7 @@ public class ElectricalNetwork {
             if (node.getLevel() != null) {
                 BlockEntity entity = node.getLevel().getBlockEntity(node.getSupportingBlockPos());
 
-                if (entity instanceof BotariumEnergyBlock<?> energyBlock && !(entity instanceof ElectricalConnectorBlockEntity)) {
+                if (entity instanceof EnergyBlock energyBlock && !(entity instanceof ElectricalConnectorBlockEntity)) {
                     if (energyBlock.getEnergyStorage().allowsInsertion())
                         consumers.put(node, energyBlock);
                 }
@@ -85,7 +85,7 @@ public class ElectricalNetwork {
     }
 
     private long insertInto(ElectricalConnectorBlockEntity from,
-                            Map.Entry<ElectricalConnectorBlockEntity, BotariumEnergyBlock<?>> to,
+                            Map.Entry<ElectricalConnectorBlockEntity, EnergyBlock> to,
                             NetworkPathConductivityContext context,
                             long amount,
                             boolean simulate) {

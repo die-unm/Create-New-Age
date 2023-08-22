@@ -10,9 +10,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
@@ -22,6 +20,7 @@ import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.NewAgeRenderTypes;
 import org.antarcticgardens.newage.content.electricity.wire.ElectricWireItem;
 import org.antarcticgardens.newage.content.electricity.wire.WireType;
+import org.antarcticgardens.newage.tools.ConversionTool;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -52,7 +51,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
             poseStack.pushPose();
 
             poseStack.translate(0.5f, 0.5f, 0.5f);
-            Matrix4f pose = poseStack.last().pose();
+            Matrix4f pose = ConversionTool.toJoml(poseStack.last().pose());
 
             Vector3f to = new Vector3f(
                     e.getKey().getX() - pos.getX(),
@@ -125,7 +124,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                     poseStack.pushPose();
 
                     poseStack.translate(0.5f, 0.5f, 0.5f);
-                    Matrix4f pose = poseStack.last().pose();
+                    Matrix4f pose = ConversionTool.toJoml(poseStack.last().pose());
 
                     renderWire(consumer, pose, to, from, blockEntity, color1, color2);
 
@@ -156,8 +155,8 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
     }
 
     private int calculateLighting(BlockEntity entity, Vector3f pos, Vector3f pos1) {
-        BlockPos blockPos = new BlockPos(entity.getBlockPos()).offset(Math.round(pos.x()), Math.round(pos.y()), Math.round(pos.z()));
-        BlockPos blockPos1 = new BlockPos(entity.getBlockPos()).offset(Math.round(pos1.x()), Math.round(pos1.y()), Math.round(pos1.z()));
+        BlockPos blockPos = new BlockPos(entity.getBlockPos()).offset(Math.round(pos.x), Math.round(pos.y), Math.round(pos.z));
+        BlockPos blockPos1 = new BlockPos(entity.getBlockPos()).offset(Math.round(pos1.x), Math.round(pos1.y), Math.round(pos1.z));
 
         int sky = entity.getLevel().getBrightness(LightLayer.SKY, blockPos);
         int block = entity.getLevel().getBrightness(LightLayer.BLOCK, blockPos);
@@ -184,6 +183,8 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                 .translate(from)
                 .rotateTowards(direction, up);
 
+        com.mojang.math.Matrix4f mojangPose = ConversionTool.toMojang(pose);
+
         int r = color[0];
         int g = color[1];
         int b = color[2];
@@ -192,18 +193,18 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
         float f = NewAgeConfig.getClient().wireThickness.get().floatValue() / 2;
         float distance = from.distance(to);
 
-        consumer.vertex(pose, -f, -f, 0.0f).color(r, g, b, z).uv2(light).endVertex();
-        consumer.vertex(pose, -f, -f, distance).color(r, g, b, z).uv2(light).endVertex();
-        consumer.vertex(pose, f, f, distance).color(r, g, b, z).uv2(light).endVertex();
-        consumer.vertex(pose, f, f, 0.0f).color(r, g, b, z).uv2(light).endVertex();
+        consumer.vertex(mojangPose, -f, -f, 0.0f).color(r, g, b, z).uv2(light).endVertex();
+        consumer.vertex(mojangPose, -f, -f, distance).color(r, g, b, z).uv2(light).endVertex();
+        consumer.vertex(mojangPose, f, f, distance).color(r, g, b, z).uv2(light).endVertex();
+        consumer.vertex(mojangPose, f, f, 0.0f).color(r, g, b, z).uv2(light).endVertex();
 
-        consumer.vertex(pose, f, -f, 0.0f).color(r, g, b, z).uv2(light).endVertex();
-        consumer.vertex(pose, f, -f, distance).color(r, g, b, z).uv2(light).endVertex();
-        consumer.vertex(pose, -f, f, distance).color(r, g, b, z).uv2(light).endVertex();
-        consumer.vertex(pose, -f, f, 0.0f).color(r, g, b, z).uv2(light).endVertex();
+        consumer.vertex(mojangPose, f, -f, 0.0f).color(r, g, b, z).uv2(light).endVertex();
+        consumer.vertex(mojangPose, f, -f, distance).color(r, g, b, z).uv2(light).endVertex();
+        consumer.vertex(mojangPose, -f, f, distance).color(r, g, b, z).uv2(light).endVertex();
+        consumer.vertex(mojangPose, -f, f, 0.0f).color(r, g, b, z).uv2(light).endVertex();
     }
 
     private boolean isVertical(Vector3f vec, Vector3f up) {
-        return vec.equals(up, 0.001f) || vec.equals(up.mul(-1.0f), 0.001f);
+        return vec.equals(up) || vec.equals(up.mul(-1.0f));
     }
 }

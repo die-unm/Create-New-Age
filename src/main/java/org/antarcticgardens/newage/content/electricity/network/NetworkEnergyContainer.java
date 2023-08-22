@@ -1,14 +1,15 @@
 package org.antarcticgardens.newage.content.electricity.network;
 
-import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
-import earth.terrarium.botarium.common.energy.base.EnergyContainer;
-import earth.terrarium.botarium.common.energy.base.EnergySnapshot;
-import earth.terrarium.botarium.common.energy.impl.SimpleEnergySnapshot;
+import earth.terrarium.botarium.api.energy.EnergyBlock;
+import earth.terrarium.botarium.api.energy.EnergySnapshot;
+import earth.terrarium.botarium.api.energy.SimpleEnergySnapshot;
+import earth.terrarium.botarium.api.energy.StatefulEnergyContainer;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
 
-public class NetworkEnergyContainer implements EnergyContainer {
+public class NetworkEnergyContainer implements StatefulEnergyContainer<BlockEntity> {
     private final ElectricalConnectorBlockEntity connector;
     private ElectricalNetwork network;
 
@@ -22,7 +23,7 @@ public class NetworkEnergyContainer implements EnergyContainer {
         if (connector.getLevel() != null) {
             BlockEntity entity = connector.getLevel().getBlockEntity(connector.getSupportingBlockPos());
 
-            if (entity instanceof BotariumEnergyBlock<?> energyBlock) {
+            if (entity instanceof EnergyBlock energyBlock) {
                 long canExtract = energyBlock.getEnergyStorage().extractEnergy(Long.MAX_VALUE, true);
                 long inserted = network.insert(connector, canExtract, false);
                 energyBlock.getEnergyStorage().extractEnergy(inserted, false);
@@ -78,11 +79,6 @@ public class NetworkEnergyContainer implements EnergyContainer {
     }
 
     @Override
-    public void clearContent() {
-
-    }
-
-    @Override
     public void deserialize(CompoundTag nbt) {
 
     }
@@ -94,5 +90,10 @@ public class NetworkEnergyContainer implements EnergyContainer {
 
     public void update(ElectricalNetwork network) {
         this.network = network;
+    }
+
+    @Override
+    public void update(BlockEntity updatable) {
+
     }
 }

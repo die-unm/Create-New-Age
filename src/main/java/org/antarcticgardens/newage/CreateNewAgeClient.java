@@ -32,7 +32,7 @@ public class CreateNewAgeClient {
                 .addToIndex();
 
         var wires = helper.createTag("wiring")
-                .item(NewAgeItems.COPPER_WIRE)
+                .item(NewAgeItems.COPPER_WIRE.get())
                 .addToIndex();
 
         var magnets = helper.createTag("magnets")
@@ -40,7 +40,7 @@ public class CreateNewAgeClient {
                 .addToIndex();
 
         var electricityGeneration = helper.createTag("electricity_generation")
-                .item(NewAgeBlocks.GENERATOR_COIL)
+                .item(NewAgeBlocks.GENERATOR_COIL.get())
                 .addToIndex();
 
         var heating = helper.createTag("heating")
@@ -160,8 +160,6 @@ public class CreateNewAgeClient {
     }
 
     public static void addToolTipModifier(BlockEntry<?> entry) {
-        TooltipModifier.REGISTRY.register(entry.asItem(), KineticStats.create(entry.asItem()));
-
+        TooltipModifier.REGISTRY.register(entry.asStack().getItem(), KineticStats.create(entry.asStack().getItem()));
     }
-
 }
