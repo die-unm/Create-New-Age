@@ -1,5 +1,6 @@
 package org.antarcticgardens.newage.compat.emi;
 
+import com.mojang.math.Vector3f;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.compat.emi.EmiSequencedAssemblySubCategory;
 import com.simibubi.create.content.processing.sequenced.SequencedRecipe;
@@ -24,6 +25,8 @@ public class EmiEnergisingSubcategory extends EmiSequencedAssemblySubCategory {
             matrices.scale(.75f, .75f, .75f);
 
             matrices.translate(0, 0, 200);
+            matrices.mulPose(Vector3f.XP.rotationDegrees(-15.5f));
+            matrices.mulPose(Vector3f.YP.rotationDegrees(22.5f));
 
             blockElement(shaft(Direction.Axis.Z))
                     .rotateBlock(0, 0, getCurrentAngle())

@@ -1,6 +1,7 @@
 package org.antarcticgardens.newage.compat.jei;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.compat.jei.category.animations.AnimatedKinetics;
 import com.simibubi.create.compat.jei.category.sequencedAssembly.JeiSequencedAssemblySubCategory;
@@ -23,6 +24,8 @@ public class JeiEnergisingSubcategory extends JeiSequencedAssemblySubCategory {
             public void draw(@NotNull PoseStack matrixStack, int xOffset, int yOffset) {
                 matrixStack.pushPose();
                 matrixStack.translate(xOffset, yOffset, 200);
+                matrixStack.mulPose(Vector3f.XP.rotationDegrees(-15.5f));
+                matrixStack.mulPose(Vector3f.YP.rotationDegrees(22.5f));
 
                 blockElement(shaft(Direction.Axis.Z))
                         .rotateBlock(0, 0, getCurrentAngle())
