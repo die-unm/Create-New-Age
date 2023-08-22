@@ -12,16 +12,29 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.data.worldgen.features.OreFeatures;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.VerticalAnchor;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
+import net.minecraft.world.level.levelgen.placement.CountPlacement;
+import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
+import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.energiser.EnergisingRecipe;
 import org.antarcticgardens.newage.tools.RecipeTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
 
 import static org.antarcticgardens.newage.content.heat.heater.HeaterBlock.STRENGTH;
 
@@ -51,8 +64,57 @@ public class CreateNewAge implements ModInitializer {
 
 		EnergisingRecipe.type = RecipeTool.createIRecipeTypeInfo("energising", new ProcessingRecipeSerializer<>(EnergisingRecipe::new));
 
-		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Decoration.UNDERGROUND_ORES, ResourceKey.create(Registry.FEATURE_REGISTRY.registry(), new ResourceLocation("create_new_age","ore_thorium")));
-		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Decoration.UNDERGROUND_ORES, ResourceKey.create(Registry.FEATURE_REGISTRY.registry(), new ResourceLocation("create_new_age","magnetite")));
+		// thorium
+
+		var thoriumFeature = new ConfiguredFeature(Feature.ORE,
+				new OreConfiguration(OreFeatures.STONE_ORE_REPLACEABLES, NewAgeBlocks.THORIUM_ORE.getDefaultState(), 16, 0.4f));
+
+		var thoriumPlacedFeature = new PlacedFeature(
+				Holder.direct(thoriumFeature),
+				Arrays.asList(
+						CountPlacement.of(6),
+						InSquarePlacement.spread(),
+						HeightRangePlacement.uniform(VerticalAnchor.absolute(20), VerticalAnchor.absolute(120))
+				)
+		);
+
+		Registry.register(BuiltinRegistries.CONFIGURED_FEATURE,
+				new ResourceLocation(MOD_ID,"ore_thorium"),
+				thoriumFeature);
+
+		Registry.register(BuiltinRegistries.PLACED_FEATURE, new ResourceLocation(MOD_ID,"ore_thorium"),
+				thoriumPlacedFeature);
+
+		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Decoration.UNDERGROUND_ORES,
+				ResourceKey.create(Registry.PLACED_FEATURE_REGISTRY,
+						new ResourceLocation(MOD_ID,"ore_thorium")));
+
+
+		// magnetite
+
+		var magnetiteFeature = new ConfiguredFeature(Feature.ORE,
+				new OreConfiguration(OreFeatures.STONE_ORE_REPLACEABLES, NewAgeBlocks.MAGNETITE_BLOCK.getDefaultState(), 4, 0.4f));
+
+		var magnetitePlacedFeature = new PlacedFeature(
+				Holder.direct(magnetiteFeature),
+				Arrays.asList(
+						CountPlacement.of(15),
+						InSquarePlacement.spread(),
+						HeightRangePlacement.uniform(VerticalAnchor.absolute(-20), VerticalAnchor.absolute(60))
+				)
+		);
+
+		Registry.register(BuiltinRegistries.CONFIGURED_FEATURE,
+				new ResourceLocation(MOD_ID,"ore_magnetite"),
+				magnetiteFeature);
+
+		Registry.register(BuiltinRegistries.PLACED_FEATURE, new ResourceLocation(MOD_ID,"ore_magnetite"),
+				magnetitePlacedFeature);
+
+		BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Decoration.UNDERGROUND_ORES,
+				ResourceKey.create(Registry.PLACED_FEATURE_REGISTRY,
+						new ResourceLocation(MOD_ID,"ore_magnetite")));
+
 
 		ContraptionMovementSetting.register(NewAgeBlocks.ELECTRICAL_CONNECTOR.get(), () -> ContraptionMovementSetting.UNMOVABLE);
 
