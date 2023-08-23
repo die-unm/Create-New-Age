@@ -101,6 +101,9 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
                     (long) Math.min(EnergiserBlock.getStrength(tier) * (long) Math.abs(be.getSpeed() * 0.1),
                             needed - charged), false);
             charged += be.lastCharged;
+            if (!getWorld().isClientSide()) {
+                be.update();
+            }
         }
 
         if (be.getLevel().isClientSide()) {

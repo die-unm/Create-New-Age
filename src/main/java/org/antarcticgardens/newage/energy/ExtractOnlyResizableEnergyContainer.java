@@ -1,13 +1,12 @@
 package org.antarcticgardens.newage.energy;
 
 import earth.terrarium.botarium.Botarium;
+import earth.terrarium.botarium.api.Updatable;
 import earth.terrarium.botarium.api.energy.ExtractOnlyEnergyContainer;
-import earth.terrarium.botarium.util.Updatable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.entity.BlockEntity;
 
-public class ExtractOnlyResizableEnergyContainer extends ExtractOnlyEnergyContainer implements Updatable<BlockEntity> {
+public class ExtractOnlyResizableEnergyContainer extends ExtractOnlyEnergyContainer implements Updatable {
     private long capacity;
     private long energy;
 
@@ -96,5 +95,10 @@ public class ExtractOnlyResizableEnergyContainer extends ExtractOnlyEnergyContai
     @Override
     public boolean allowsExtraction() {
         return true;
+    }
+
+    @Override
+    public void update() {
+        updatable.update();
     }
 }
