@@ -93,7 +93,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                             (float) (endPos.z - pos.getZ() - 0.5)
                     );
 
-                    double distance = endPos.distanceToSqr(bound.getX(), bound.getY(), bound.getZ());
+                    double distance = endPos.distanceToSqr(bound.getX() + 0.5, bound.getY() + 0.5, bound.getZ() + 0.5);
 
                     if (distance > Mth.square(ElectricWireItem.MAX_DISTANCE * 2))
                         return;
@@ -116,7 +116,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
                         }
                     }
 
-                    if (distance > Mth.square(ElectricWireItem.MAX_DISTANCE)) {
+                    if (distance >= Mth.square(ElectricWireItem.MAX_DISTANCE)) {
                         color1 = TOO_LONG1;
                         color2 = TOO_LONG2;
                     }
