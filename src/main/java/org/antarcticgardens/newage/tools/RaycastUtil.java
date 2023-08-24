@@ -5,9 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -23,8 +21,8 @@ public class RaycastUtil {
     private static final Method _traverseBlocks;
 
     static {
-        try {
-            _traverseBlocks = BlockGetter.class.getDeclaredMethod("traverseBlocks", Vec3.class, Vec3.class, Object.class, BiFunction.class, Function.class);
+        try { // TODO: [traverseBlocks] make work with unobfuscated work
+            _traverseBlocks = BlockGetter.class.getDeclaredMethod("m_151361_", Vec3.class, Vec3.class, Object.class, BiFunction.class, Function.class);
             _traverseBlocks.setAccessible(true);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
