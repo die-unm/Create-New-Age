@@ -22,7 +22,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
-import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.energiser.EnergisingRecipe;
 import org.antarcticgardens.newage.tools.RecipeTool;
 import org.slf4j.Logger;
@@ -67,9 +66,7 @@ public class CreateNewAge {
 		NewAgeBlockEntityTypes.load();
 		NewAgeItems.load();
 
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(CreateNewAgeClient::onInitializeClient);
-
-		NewAgeConfig.getCommon();
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientIniter::onInitializeClient);
 
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::generalSetup);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerDatapack);
