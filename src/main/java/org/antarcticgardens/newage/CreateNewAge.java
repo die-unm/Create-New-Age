@@ -55,9 +55,7 @@ public class CreateNewAge {
 		NewAgeBlockEntityTypes.load();
 		NewAgeItems.load();
 
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(CreateNewAgeClient::onInitializeClient);
-
-		NewAgeConfig.getCommon();
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientIniter::onInitializeClient);
 
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::generalSetup);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerDatapack);

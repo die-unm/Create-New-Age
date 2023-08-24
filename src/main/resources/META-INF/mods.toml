@@ -2,7 +2,7 @@ modLoader="javafml"
 loaderVersion="[43,)"
 
 license="BSD-3-Clause"
-issueTrackerURL="https://github.com/MinecraftForge/MinecraftForge/issues"
+issueTrackerURL="https://gitlab.com/antarcticgardens/create-new-age"
 showAsResourcePack=false
 
 [[mods]]

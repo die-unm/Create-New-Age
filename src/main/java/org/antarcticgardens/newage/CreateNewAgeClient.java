@@ -1,6 +1,5 @@
 package org.antarcticgardens.newage;
 
-import com.simibubi.create.Create;
 import com.simibubi.create.foundation.config.ui.BaseConfigScreen;
 import com.simibubi.create.foundation.item.KineticStats;
 import com.simibubi.create.foundation.item.TooltipModifier;
