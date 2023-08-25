@@ -5,18 +5,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class RaycastUtil {
@@ -28,7 +22,7 @@ public class RaycastUtil {
     public static HitResult pickFilteredBlockFromPos(Level world, Vec3 from, Vec3 dir, float distance, Predicate<BlockState> p) {
         Vec3 to = from.add(dir.x * distance, dir.y * distance, dir.z * distance);
 
-        return traverseBlocks(from, to, null, (context, pos) -> {
+        return BlockGetter.traverseBlocks(from, to, null, (context, pos) -> {
             BlockState blockState = world.getBlockState(pos);
             VoxelShape voxelShape = ClipContext.Block.OUTLINE.get(blockState, world, pos, null);
             BlockHitResult blockHitResult = world.clipWithInteractionOverride(from, to, pos, voxelShape, blockState);
@@ -37,9 +31,5 @@ public class RaycastUtil {
             Vec3 vec3 = from.subtract(to);
             return BlockHitResult.miss(to, Direction.getNearest(vec3.x, vec3.y, vec3.z), BlockPos.containing(to));
         });
-    }
-
-    private static <T, C> T traverseBlocks(Vec3 from, Vec3 to, C context, BiFunction<C, BlockPos, T> tester, Function<C, T> onFail) {
-        return BlockGetter.traverseBlocks(from, to, context, tester, onFail);
     }
 }
