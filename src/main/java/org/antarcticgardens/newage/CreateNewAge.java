@@ -22,6 +22,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
+import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.energiser.EnergisingRecipe;
 import org.antarcticgardens.newage.tools.RecipeTool;
 import org.slf4j.Logger;
@@ -65,6 +66,7 @@ public class CreateNewAge {
 		NewAgeBlocks.load();
 		NewAgeBlockEntityTypes.load();
 		NewAgeItems.load();
+		NewAgeConfig.getCommon();
 
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientIniter::onInitializeClient);
 
@@ -79,7 +81,6 @@ public class CreateNewAge {
 		} catch (Exception e) {
 			LOGGER.error("Exception", e);
 		}
-
 	}
 
 	public void registerDatapack(final AddPackFindersEvent event) {
