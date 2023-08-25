@@ -20,17 +20,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class RaycastUtil {
-    private static final Method _traverseBlocks;
-
-    static {
-        try {
-            _traverseBlocks = BlockGetter.class.getDeclaredMethod("traverseBlocks", Vec3.class, Vec3.class, Object.class, BiFunction.class, Function.class);
-            _traverseBlocks.setAccessible(true);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static HitResult pickBlockFromPos(Level world, Vec3 pos, Vec3 dir, float distance) {
         Vec3 vec33 = pos.add(dir.x * distance, dir.y * distance, dir.z * distance);
         return world.clip(new ClipContext(pos, vec33, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, null));
@@ -51,10 +40,6 @@ public class RaycastUtil {
     }
 
     private static <T, C> T traverseBlocks(Vec3 from, Vec3 to, C context, BiFunction<C, BlockPos, T> tester, Function<C, T> onFail) {
-        try {
-            return (T) _traverseBlocks.invoke(null, from, to, context, tester, onFail);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
+        return BlockGetter.traverseBlocks(from, to, context, tester, onFail);
     }
 }
