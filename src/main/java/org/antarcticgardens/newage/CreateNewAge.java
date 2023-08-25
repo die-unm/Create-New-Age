@@ -20,7 +20,6 @@ import net.minecraftforge.resource.PathPackResources;
 import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.energiser.EnergisingRecipe;
 import org.antarcticgardens.newage.tools.RecipeTool;
-import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +53,7 @@ public class CreateNewAge {
 		NewAgeBlocks.load();
 		NewAgeBlockEntityTypes.load();
 		NewAgeItems.load();
+		NewAgeConfig.getCommon();
 
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientIniter::onInitializeClient);
 
@@ -68,7 +68,6 @@ public class CreateNewAge {
 		} catch (Exception e) {
 			LOGGER.error("Exception", e);
 		}
-
 	}
 
 	public void registerDatapack(final AddPackFindersEvent event) {
