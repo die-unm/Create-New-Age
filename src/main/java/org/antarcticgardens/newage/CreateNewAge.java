@@ -49,7 +49,7 @@ public class CreateNewAge {
 					.build()
 			);
 
-	public static final CreateRegistrate REGISTRATE = BASE_REGISTRATE.useCreativeTab(tab);
+	public static final CreateRegistrate REGISTRATE = BASE_REGISTRATE.setCreativeTab(tab);
 
 
 	public static final ResourceKey<CreativeModeTab> CREATIVE_TAB_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB,
