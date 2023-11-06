@@ -6,7 +6,7 @@ import org.antarcticgardens.newage.content.electricity.connector.ElectricalConne
 import java.util.*;
 
 public class ElectricalNetworkPathManager {
-    private final NetworkPathConductivityContext context = new NetworkPathConductivityContext();
+    private NetworkPathConductivityContext context = new NetworkPathConductivityContext();
 
     protected void addConnection(ElectricalConnectorBlockEntity node, ElectricalConnectorBlockEntity node1) {
         context.addConnection(node, node1);
@@ -16,6 +16,7 @@ public class ElectricalNetworkPathManager {
         List<ElectricalConnectorBlockEntity> visited = new ArrayList<>();
         Queue<QueueElement> queue = new LinkedList<>();
         queue.add(new QueueElement(a, null, 0));
+        visited.add(a);
 
         while (!queue.isEmpty()) {
             var element = queue.poll();
@@ -56,6 +57,10 @@ public class ElectricalNetworkPathManager {
 
     protected NetworkPathConductivityContext getConductivityContext() {
         return context;
+    }
+    
+    protected void setConductivityContext(NetworkPathConductivityContext context) {
+        this.context = context;
     }
 
     protected void tick() {

@@ -160,7 +160,5 @@ public class CreateNewAgeClient {
 
     public static void addToolTipModifier(BlockEntry<?> entry) {
         TooltipModifier.REGISTRY.register(entry.asItem(), KineticStats.create(entry.asItem()));
-
     }
-
 }

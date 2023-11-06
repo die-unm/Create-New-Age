@@ -1,14 +1,17 @@
 package org.antarcticgardens.newage.content.electricity.connector;
 
+import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.foundation.utility.Lang;
 import com.simibubi.create.foundation.utility.NBTHelper;
 import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
-import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -27,14 +30,12 @@ import org.antarcticgardens.newage.content.electricity.wire.WireType;
 
 import java.util.*;
 
-public class ElectricalConnectorBlockEntity extends BlockEntity implements BotariumEnergyBlock<WrappedBlockEnergyContainer> {
+public class ElectricalConnectorBlockEntity extends BlockEntity implements BotariumEnergyBlock<NetworkEnergyContainer>, IHaveGoggleInformation {
     private final Map<ElectricalConnectorBlockEntity, WireType> connectors = new HashMap<>();
     private final Map<BlockPos, WireType> connectorPositions = new HashMap<>();
 
     private ElectricalNetwork network;
-    private WrappedBlockEnergyContainer energyContainer;
-
-    private NetworkEnergyContainer internal;
+    private NetworkEnergyContainer energyContainer;
 
     protected boolean tickedBefore = false;
 
@@ -103,8 +104,25 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
         }
     }
 
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        Lang.translate("tooltip.create_new_age.connector_info")
+                .style(ChatFormatting.WHITE).forGoggles(tooltip);
+        
+        Lang.translate("tooltip.create_new_age.mode")
+                .style(ChatFormatting.GRAY)
+                .forGoggles(tooltip);
+        
+        ElectricalConnectorMode mode = getBlockState().getValue(ElectricalConnectorBlock.MODE);
+        Lang.translate("tooltip.create_new_age.connector_mode." + mode.getSerializedName())
+                .style(ChatFormatting.AQUA)
+                .forGoggles(tooltip, 1);
+        
+        return true;
+    }
+
     protected void neighborChanged() {
-        network.updateConsumers();
+        network.updateConsumersAndSources();
     }
 
     private void updateNetwork() {
@@ -168,10 +186,9 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
     public void setNetwork(ElectricalNetwork network) {
         this.network = network;
         if (energyContainer == null) {
-            internal = new NetworkEnergyContainer(this, this.network);
-            energyContainer = new WrappedBlockEnergyContainer(this, internal);
+            energyContainer = new NetworkEnergyContainer(this, this.network);
         } else {
-            internal.update(this.network);
+            energyContainer.update(this.network);
         }
     }
 
@@ -180,7 +197,7 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
     }
 
     @Override
-    public WrappedBlockEnergyContainer getEnergyStorage() {
+    public NetworkEnergyContainer getEnergyStorage() {
         if (network == null) {
             setNetwork(new ElectricalNetwork(this));
         }
