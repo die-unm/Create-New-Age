@@ -4,7 +4,6 @@ import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.utility.Lang;
-import earth.terrarium.botarium.common.energy.EnergyApi;
 import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -16,6 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlock;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlockEntity;
+import org.antarcticgardens.newage.energy.EnergyHooks;
 import org.antarcticgardens.newage.energy.ExtractOnlyResizableEnergyContainer;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 
@@ -74,7 +74,7 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
         coilsLeft = processCoil(worldPosition, facing, coilsLeft);
         processCoil(worldPosition, facing.getOpposite(), coilsLeft);
 
-        EnergyApi.distributeEnergyNearby(this, getEnergyStorage().getStoredEnergy());
+        EnergyHooks.distributeEnergyNearby(this, getEnergyStorage().getStoredEnergy());
     }
 
     @Override
