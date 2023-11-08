@@ -5,7 +5,6 @@ import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.utility.Lang;
 import earth.terrarium.botarium.api.energy.EnergyBlock;
-import earth.terrarium.botarium.api.energy.EnergyHooks;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -17,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlock;
 import org.antarcticgardens.newage.content.generation.generatorcoil.GeneratorCoilBlockEntity;
+import org.antarcticgardens.newage.energy.EnergyHooks;
 import org.antarcticgardens.newage.energy.ExtractOnlyResizableEnergyContainer;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 
@@ -53,7 +53,7 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Ener
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
 
-        Lang.translate("tooltip.create_new_age.energy_per_second", StringFormattingTool.formatLong(lastOutput*20L))
+        Lang.translate("tooltip.create_new_age.energy_per_tick", StringFormattingTool.formatLong(lastOutput))
                 .style(ChatFormatting.AQUA)
                 .forGoggles(tooltip, 1);
 

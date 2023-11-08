@@ -5,6 +5,7 @@ import com.simibubi.create.content.fluids.tank.BoilerHeaters;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeSerializer;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
+import com.simibubi.create.foundation.placement.PlacementHelpers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
@@ -19,6 +20,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.resource.PathPackResources;
 import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.energiser.EnergisingRecipe;
+import org.antarcticgardens.newage.content.generation.magnets.MagnetPlacementHelper;
 import org.antarcticgardens.newage.tools.RecipeTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +43,9 @@ public class CreateNewAge {
 
 	public static final CreateRegistrate REGISTRATE = BASE_REGISTRATE.creativeModeTab(() -> CREATIVE_TAB);
 
-
 	public static IRecipeTypeInfo ENERGISING_RECIPE_TYPE;
+	
+	private static int magnetPlacementHelperId;
 
 	public CreateNewAge() {
 		var modBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -53,6 +56,9 @@ public class CreateNewAge {
 		NewAgeBlocks.load();
 		NewAgeBlockEntityTypes.load();
 		NewAgeItems.load();
+
+		magnetPlacementHelperId = PlacementHelpers.register(new MagnetPlacementHelper());
+		
 		NewAgeConfig.getCommon();
 
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientIniter::onInitializeClient);
@@ -70,6 +76,10 @@ public class CreateNewAge {
 		}
 	}
 
+	public static int getMagnetPlacementHelperId() {
+		return magnetPlacementHelperId;
+	}
+	
 	public void registerDatapack(final AddPackFindersEvent event) {
 		try {
 			if (event.getPackType() == PackType.SERVER_DATA) {
@@ -98,7 +108,7 @@ public class CreateNewAge {
 
 	private void generalSetup(final FMLCommonSetupEvent event) {
 		event.enqueueWork(() -> {
-			BoilerHeaters.registerHeater(NewAgeBlocks.HEATER.get(), (level, pos, state) -> state.getValue(STRENGTH) - 1);
+			BoilerHeaters.registerHeater(NewAgeBlocks.HEATER.get(), (level, pos, state) -> state.getValue(STRENGTH).ordinal() - 1);
 			ContraptionMovementSetting.register(NewAgeBlocks.ELECTRICAL_CONNECTOR.get(), () -> ContraptionMovementSetting.UNMOVABLE);
 		});
 	}

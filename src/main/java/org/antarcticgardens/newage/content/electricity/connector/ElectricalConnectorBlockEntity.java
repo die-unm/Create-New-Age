@@ -1,14 +1,18 @@
 package org.antarcticgardens.newage.content.electricity.connector;
 
+import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.foundation.utility.Lang;
 import com.simibubi.create.foundation.utility.NBTHelper;
 import earth.terrarium.botarium.api.energy.EnergyBlock;
 import earth.terrarium.botarium.api.energy.StatefulEnergyContainer;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -27,12 +31,12 @@ import org.antarcticgardens.newage.content.electricity.wire.WireType;
 
 import java.util.*;
 
-public class ElectricalConnectorBlockEntity extends BlockEntity implements EnergyBlock {
+public class ElectricalConnectorBlockEntity extends BlockEntity implements EnergyBlock, IHaveGoggleInformation {
     private final Map<ElectricalConnectorBlockEntity, WireType> connectors = new HashMap<>();
     private final Map<BlockPos, WireType> connectorPositions = new HashMap<>();
 
     private ElectricalNetwork network;
-    private NetworkEnergyContainer internal;
+    private NetworkEnergyContainer energyContainer;
 
     protected boolean tickedBefore = false;
 
@@ -101,8 +105,25 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Energ
         }
     }
 
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        Lang.translate("tooltip.create_new_age.connector_info")
+                .style(ChatFormatting.WHITE).forGoggles(tooltip);
+        
+        Lang.translate("tooltip.create_new_age.mode")
+                .style(ChatFormatting.GRAY)
+                .forGoggles(tooltip);
+        
+        ElectricalConnectorMode mode = getBlockState().getValue(ElectricalConnectorBlock.MODE);
+        Lang.translate("tooltip.create_new_age.connector_mode." + mode.getSerializedName())
+                .style(ChatFormatting.AQUA)
+                .forGoggles(tooltip, 1);
+        
+        return true;
+    }
+
     protected void neighborChanged() {
-        network.updateConsumers();
+        network.updateConsumersAndSources();
     }
 
     private void updateNetwork() {
@@ -165,10 +186,11 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Energ
 
     public void setNetwork(ElectricalNetwork network) {
         this.network = network;
-        if (internal == null)
-            internal = new NetworkEnergyContainer(this, this.network);
+        
+        if (energyContainer == null)
+            energyContainer = new NetworkEnergyContainer(this, this.network);
         else
-            internal.update(this.network);
+            energyContainer.update(this.network);
     }
 
     public ElectricalNetwork getNetwork() {
@@ -180,12 +202,11 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Energ
         if (network == null)
             setNetwork(new ElectricalNetwork(this));
 
-
-        return internal;
+        return energyContainer;
     }
 
     @Override
     public void update() {
-        internal.update(this.network);
+        energyContainer.update(this.network);
     }
 }

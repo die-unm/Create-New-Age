@@ -21,7 +21,7 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements EnergyBl
     public int tier;
     public float size = 0f;
     private EnergiserBehaviour energisingBehaviour;
-    private InsertOnlyResizableEnergyContainer energy;
+    protected InsertOnlyResizableEnergyContainer energy;
 
     public EnergiserBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int tier) {
         super(type, pos, state);
@@ -73,7 +73,7 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements EnergyBl
             Lang.translate("tooltip.create_new_age.energy_usage")
                     .style(ChatFormatting.GRAY)
                     .forGoggles(tooltip);
-            Lang.translate("tooltip.create_new_age.energy_per_second", StringFormattingTool.formatLong(lastCharged * 20L))
+            Lang.translate("tooltip.create_new_age.energy_per_tick", StringFormattingTool.formatLong(lastCharged))
                     .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
         }
 

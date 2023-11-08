@@ -68,7 +68,7 @@ public class InsertOnlyResizableEnergyContainer extends InsertOnlyEnergyContaine
 
     @Override
     public long maxInsert() {
-        return 1024;
+        return Integer.MAX_VALUE;
     }
 
     @Override

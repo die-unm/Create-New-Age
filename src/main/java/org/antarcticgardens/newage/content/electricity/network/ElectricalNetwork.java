@@ -1,9 +1,14 @@
 package org.antarcticgardens.newage.content.electricity.network;
 
-import earth.terrarium.botarium.api.energy.EnergyBlock;
+import earth.terrarium.botarium.api.energy.PlatformEnergyManager;
+import earth.terrarium.botarium.common.energy.util.EnergyHooks;
+import earth.terrarium.botarium.forge.energy.ForgeEnergyManager;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlock;
 import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
 
 import java.util.*;
@@ -11,7 +16,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class ElectricalNetwork {
     private final List<ElectricalConnectorBlockEntity> nodes = new ArrayList<>();
-    private final Map<ElectricalConnectorBlockEntity, EnergyBlock> consumers = new HashMap<>();
+
+    private final Map<ElectricalConnectorBlockEntity, EnergyStorageWrapper> consumers = new HashMap<>();
+    private final Map<ElectricalConnectorBlockEntity, EnergyStorageWrapper> pulledSources = new HashMap<>();
 
     private final ElectricalNetworkPathManager pathManager = new ElectricalNetworkPathManager();
 
@@ -21,7 +28,7 @@ public class ElectricalNetwork {
 
     public void addNode(ElectricalConnectorBlockEntity node) {
         addNode(node, new ArrayList<>());
-        updateConsumers();
+        updateConsumersAndSources();
     }
 
     private void addNode(ElectricalConnectorBlockEntity node, List<ElectricalConnectorBlockEntity> processedNodes) {
@@ -46,16 +53,24 @@ public class ElectricalNetwork {
             pathManager.addConnection(node, connectedNode);
     }
 
-    public void updateConsumers() {
+    public void updateConsumersAndSources() {
         consumers.clear();
+        pulledSources.clear();
 
         for (ElectricalConnectorBlockEntity node : nodes) {
             if (node.getLevel() != null) {
+                Direction dir = node.getBlockState().getValue(BlockStateProperties.FACING);
                 BlockEntity entity = node.getLevel().getBlockEntity(node.getSupportingBlockPos());
-
-                if (entity instanceof EnergyBlock energyBlock && !(entity instanceof ElectricalConnectorBlockEntity)) {
-                    if (energyBlock.getEnergyStorage().allowsInsertion())
-                        consumers.put(node, energyBlock);
+                
+                if (entity != null && !(entity instanceof ElectricalConnectorBlockEntity) && EnergyHooks.isEnergyContainer(entity, dir)) {
+                    PlatformEnergyManager storage = (PlatformEnergyManager) EnergyHooks.getBlockEnergyManager(entity, dir);
+                    if (storage instanceof ForgeEnergyManager fem) {
+                        if (storage.supportsInsertion())
+                            consumers.put(node, new EnergyStorageWrapper(entity, fem.energy()));
+                        
+                        if (storage.supportsExtraction() && node.getBlockState().getValue(ElectricalConnectorBlock.MODE).pull)
+                            pulledSources.put(node, new EnergyStorageWrapper(entity, fem.energy()));
+                    }
                 }
             }
         }
@@ -77,7 +92,7 @@ public class ElectricalNetwork {
 
         consumers.entrySet().stream()
                 .sorted(Comparator.comparingDouble(e ->
-                        e.getValue().getEnergyStorage().getStoredEnergy() / (double) e.getValue().getEnergyStorage().getMaxCapacity()))
+                        e.getValue().storage().getEnergyStored() / (double) e.getValue().storage().getMaxEnergyStored()))
                 .takeWhile(e -> inserted.get() < amount)
                 .forEach(e -> inserted.addAndGet(insertInto(from, e, context, Math.min(perConsumer, amount - inserted.get()), simulate)));
 
@@ -85,7 +100,7 @@ public class ElectricalNetwork {
     }
 
     private long insertInto(ElectricalConnectorBlockEntity from,
-                            Map.Entry<ElectricalConnectorBlockEntity, EnergyBlock> to,
+                            Map.Entry<ElectricalConnectorBlockEntity, EnergyStorageWrapper> to,
                             NetworkPathConductivityContext context,
                             long amount,
                             boolean simulate) {
@@ -94,12 +109,14 @@ public class ElectricalNetwork {
 
         while ((path = pathManager.findConductiblePath(from, to.getKey())) != null && inserted < amount) {
             long pathConductivity = context.calculatePathConductivity(path);
-            long insertedThroughThisPath = to.getValue().getEnergyStorage().insertEnergy(Math.min(pathConductivity, amount - inserted), simulate);
+            long insertedThroughThisPath = to.getValue().insert(Math.min(pathConductivity, amount - inserted), simulate);
 
             if (insertedThroughThisPath == 0)
                 break;
 
-            if (!simulate && insertedThroughThisPath > 0 && to.getValue() instanceof BlockEntity be) {
+            if (!simulate && insertedThroughThisPath > 0) {
+                BlockEntity be = to.getValue().entity();
+
                 be.setChanged();
                 if (be.getLevel() instanceof ServerLevel serverLevel)
                     serverLevel.getChunkSource().blockChanged(be.getBlockPos());
@@ -121,6 +138,12 @@ public class ElectricalNetwork {
     }
 
     protected void tick() {
+        for (Map.Entry<ElectricalConnectorBlockEntity, EnergyStorageWrapper> e : pulledSources.entrySet()) {
+            long maxExtracted = e.getValue().extract(Long.MAX_VALUE, true);
+            long inserted = insert(e.getKey(), maxExtracted, false);
+            e.getValue().extract(inserted, false);
+        }
+        
         pathManager.tick();
     }
 
@@ -130,5 +153,9 @@ public class ElectricalNetwork {
 
     public List<ElectricalConnectorBlockEntity> getNodes() {
         return Collections.unmodifiableList(nodes);
+    }
+    
+    public ElectricalNetworkPathManager getPathManager() {
+        return pathManager;
     }
 }

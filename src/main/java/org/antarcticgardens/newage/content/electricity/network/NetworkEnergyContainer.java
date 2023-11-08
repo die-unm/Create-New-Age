@@ -1,8 +1,6 @@
 package org.antarcticgardens.newage.content.electricity.network;
 
-import earth.terrarium.botarium.api.energy.EnergyBlock;
 import earth.terrarium.botarium.api.energy.EnergySnapshot;
-import earth.terrarium.botarium.api.energy.SimpleEnergySnapshot;
 import earth.terrarium.botarium.api.energy.StatefulEnergyContainer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
@@ -17,20 +15,14 @@ public class NetworkEnergyContainer implements StatefulEnergyContainer<BlockEnti
         this.connector = connector;
         this.network = network;
     }
+    
+    public ElectricalNetwork getNetwork() {
+        return network;
+    }
 
     @Override
     public long insertEnergy(long maxAmount, boolean simulate) {
-        if (connector.getLevel() != null) {
-            BlockEntity entity = connector.getLevel().getBlockEntity(connector.getSupportingBlockPos());
-
-            if (entity instanceof EnergyBlock energyBlock) {
-                long canExtract = energyBlock.getEnergyStorage().extractEnergy(Long.MAX_VALUE, true);
-                long inserted = network.insert(connector, canExtract, false);
-                energyBlock.getEnergyStorage().extractEnergy(inserted, false);
-            }
-        }
-
-        return 0;
+        return network.insert(connector, maxAmount, simulate);
     }
 
     @Override
@@ -70,7 +62,7 @@ public class NetworkEnergyContainer implements StatefulEnergyContainer<BlockEnti
 
     @Override
     public EnergySnapshot createSnapshot() {
-        return new SimpleEnergySnapshot(this);
+        return new NetworkSnapshot(network);
     }
 
     @Override
@@ -93,7 +85,8 @@ public class NetworkEnergyContainer implements StatefulEnergyContainer<BlockEnti
     }
 
     @Override
-    public void update(BlockEntity updatable) {
-
+    public void update(BlockEntity be) {
+        be.setChanged();
+        be.getLevel().sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), Block.UPDATE_ALL);
     }
 }
