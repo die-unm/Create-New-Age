@@ -68,7 +68,7 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Ener
         if (level == null || level.isClientSide) return;
         Direction facing = getBlockState().getValue(DirectionalKineticBlock.FACING);
 
-        energyContainer.setMaxCapacity(lastOutput * 20L);
+        getEnergyStorage().setMaxCapacity(lastOutput * 20L);
 
         int coilsLeft = NewAgeConfig.getCommon().maxCoils.get();
         lastOutput = 0;
