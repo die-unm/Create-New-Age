@@ -1,7 +1,7 @@
 package org.antarcticgardens.newage.content.electricity.network;
 
+import earth.terrarium.botarium.api.energy.EnergyHooks;
 import earth.terrarium.botarium.api.energy.PlatformEnergyManager;
-import earth.terrarium.botarium.common.energy.util.EnergyHooks;
 import earth.terrarium.botarium.forge.energy.ForgeEnergyManager;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -63,7 +63,7 @@ public class ElectricalNetwork {
                 BlockEntity entity = node.getLevel().getBlockEntity(node.getSupportingBlockPos());
                 
                 if (entity != null && !(entity instanceof ElectricalConnectorBlockEntity) && EnergyHooks.isEnergyContainer(entity, dir)) {
-                    PlatformEnergyManager storage = (PlatformEnergyManager) EnergyHooks.getBlockEnergyManager(entity, dir);
+                    PlatformEnergyManager storage = EnergyHooks.getBlockEnergyManager(entity, dir);
                     if (storage instanceof ForgeEnergyManager fem) {
                         if (storage.supportsInsertion())
                             consumers.put(node, new EnergyStorageWrapper(entity, fem.energy()));
