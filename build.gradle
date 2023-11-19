@@ -63,7 +63,7 @@ dependencies {
 	modImplementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
 
 	// Botarium for energy API
-	modImplementation "earth.terrarium:botarium-common-${minecraft_version}:${botarium_version}"
+//	modImplementation "earth.terrarium:botarium-common-${minecraft_version}:${botarium_version}"
 	modApi("earth.terrarium:botarium-forge-${minecraft_version}:${botarium_version}")
 
 	// more stuff
