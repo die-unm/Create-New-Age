@@ -10,6 +10,6 @@ public class NewAgeCreativeTab extends CreativeModeTab {
 
     @Override
     public ItemStack makeIcon() {
-        return NewAgeBlocks.ENERGISER_T1.asStack();
+        return NewAgeBlocks.GENERATOR_COIL.asStack();
     }
 }

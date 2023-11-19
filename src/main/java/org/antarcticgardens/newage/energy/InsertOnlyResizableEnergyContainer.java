@@ -59,6 +59,9 @@ public class InsertOnlyResizableEnergyContainer extends InsertOnlyEnergyContaine
 
     public void setMaxCapacity(long capacity) {
         this.capacity = capacity;
+
+        if (energy > capacity)
+            energy = capacity;
     }
 
     @Override
@@ -73,7 +76,7 @@ public class InsertOnlyResizableEnergyContainer extends InsertOnlyEnergyContaine
 
     @Override
     public long maxExtract() {
-        return 1024;
+        return 0;
     }
 
     @Override

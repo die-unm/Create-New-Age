@@ -221,9 +221,7 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
             }
             shouldCreateParticles = true;
             blockEntity.sendData();
-            return ProcessingResult.PASS;
         }
-
 
         return ProcessingResult.HOLD;
     }
