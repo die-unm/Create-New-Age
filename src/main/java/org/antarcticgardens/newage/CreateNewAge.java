@@ -47,7 +47,7 @@ public class CreateNewAge {
 	public static final RegistryObject<CreativeModeTab> tab = TAB_REGISTRAR.register("create_new_age_tab",
 			() -> CreativeModeTab.builder()
 					.title(Component.translatable("item_group." + MOD_ID + ".tab"))
-					.icon(NewAgeBlocks.ENERGISER_T1::asStack)
+					.icon(NewAgeBlocks.GENERATOR_COIL::asStack)
 					.build()
 			);
 
