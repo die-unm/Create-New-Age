@@ -2,6 +2,7 @@ package org.antarcticgardens.newage.content.electricity.network;
 
 import earth.terrarium.botarium.common.energy.base.EnergyContainer;
 import earth.terrarium.botarium.common.energy.base.EnergySnapshot;
+import earth.terrarium.botarium.common.energy.impl.SimpleEnergySnapshot;
 import earth.terrarium.botarium.util.Updatable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
@@ -20,9 +21,16 @@ public class NetworkEnergyContainer implements EnergyContainer, Updatable<BlockE
     public ElectricalNetwork getNetwork() {
         return network;
     }
+    
+    public void setNetwork(ElectricalNetwork network) {
+        this.network = network;
+    }
 
     @Override
     public long insertEnergy(long maxAmount, boolean simulate) {
+        if (network == null)
+            return 0;
+        
         return network.insert(connector, maxAmount, simulate);
     }
 
@@ -63,6 +71,9 @@ public class NetworkEnergyContainer implements EnergyContainer, Updatable<BlockE
 
     @Override
     public EnergySnapshot createSnapshot() {
+        if (network == null)
+            return new SimpleEnergySnapshot(this);
+        
         return new NetworkSnapshot(network);
     }
 
@@ -86,11 +97,6 @@ public class NetworkEnergyContainer implements EnergyContainer, Updatable<BlockE
         return new CompoundTag();
     }
 
-    
-    
-    public void update(ElectricalNetwork network) {
-        this.network = network;
-    }
     
     @Override
     public void update(BlockEntity be) {
