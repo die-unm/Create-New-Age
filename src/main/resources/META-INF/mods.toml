@@ -39,6 +39,6 @@ side="BOTH"
 [[dependencies.create_new_age]]
 modId="create"
 mandatory=true
-versionRange="[0.5.1.b,)"
+versionRange="[0.5.1.e,)"
 ordering="NONE"
 side="BOTH"
