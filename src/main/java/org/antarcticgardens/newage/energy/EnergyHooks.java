@@ -2,6 +2,7 @@ package org.antarcticgardens.newage.energy;
 
 import com.mojang.datafixers.util.Pair;
 import earth.terrarium.botarium.common.energy.EnergyApi;
+import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
 import earth.terrarium.botarium.common.energy.base.EnergyContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,8 +16,8 @@ public class EnergyHooks {
     public static long distributeEnergyNearby(BlockEntity energyBlock, long amount) {
         BlockPos blockPos = energyBlock.getBlockPos();
         Level level = energyBlock.getLevel();
-        if (level == null) return 0;
-        EnergyContainer internalEnergy = EnergyApi.getBlockEnergyContainer(energyBlock, null);
+        if (level == null || !(energyBlock instanceof BotariumEnergyBlock<?> block)) return 0;
+        EnergyContainer internalEnergy = block.getEnergyStorage();
         long amountToDistribute = internalEnergy.extractEnergy(amount, true);
         if (amountToDistribute == 0) return 0;
         List<EnergyContainer> list = Direction.stream()
