@@ -50,10 +50,8 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
     public MotorBlockEntity(BlockEntityType<?> arg, BlockPos arg2, BlockState arg3, IMotorVariant variant) {
         super(arg, arg2, arg3);
         this.variant = variant;
-        if (mut == null) {
-            getOrCreateNetwork();
-//            getEnergyStorage();
-        }
+        getOrCreateNetwork();
+        getEnergyStorage();
         mut.setMaxCapacity(variant.getMaxCapacity());
     }
 
@@ -267,6 +265,6 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
 
     @Override
     public WrappedBlockEnergyContainer getEnergyStorage() {
-        return energy == null ? energy = new WrappedBlockEnergyContainer(this, mut = new InsertOnlyResizableEnergyContainer(variant.getMaxCapacity())) : energy;
+        return energy == null ? energy = new WrappedBlockEnergyContainer(this, mut = new InsertOnlyResizableEnergyContainer(mut == null ? 1 : mut.getMaxCapacity())) : energy;
     }
 }
