@@ -26,18 +26,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.motors.extension.MotorExtensionBlockEntity;
+import org.antarcticgardens.newage.content.motors.variants.IMotorVariant;
 import org.antarcticgardens.newage.energy.InsertOnlyResizableEnergyContainer;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 
 import java.util.List;
 
 public class MotorBlockEntity extends GeneratingKineticBlockEntity implements BotariumEnergyBlock<WrappedBlockEnergyContainer>, IHaveGoggleInformation {
-
     public boolean needsPower = false;
     public WrappedBlockEnergyContainer energy;
-    private final long maxCapacity;
-    private final float stressImpact;
-    private final float maxSpeed;
+    private final IMotorVariant variant;
     public MotorScrollValueBehaviour speedBehavior;
     public boolean powered = false;
     private float actualSpeed = 0;
@@ -49,21 +47,18 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
     private float stress = 0;
     private InsertOnlyResizableEnergyContainer mut;
 
-    public MotorBlockEntity(BlockEntityType<?> arg, BlockPos arg2, BlockState arg3, long maxCapacity, float stressImpact, float maxSpeed) {
+    public MotorBlockEntity(BlockEntityType<?> arg, BlockPos arg2, BlockState arg3, IMotorVariant variant) {
         super(arg, arg2, arg3);
-        this.maxCapacity = maxCapacity;
-        this.stressImpact = stressImpact;
-        this.maxSpeed = maxSpeed;
+        this.variant = variant;
         if (mut == null) {
             getOrCreateNetwork();
 //            getEnergyStorage();
         }
-        mut.setMaxCapacity(maxCapacity);
-        speedBehavior.between((int) -maxSpeed, (int) maxSpeed);
+        mut.setMaxCapacity(variant.getMaxCapacity());
     }
 
-    public static BlockEntityBuilder.BlockEntityFactory<MotorBlockEntity> create(long capacity, float stressGenerated, float maxSpeed) {
-        return (type, pos, state) -> new MotorBlockEntity(type, pos, state, capacity, stressGenerated, maxSpeed);
+    public static BlockEntityBuilder.BlockEntityFactory<MotorBlockEntity> create(IMotorVariant variant) {
+        return (type, pos, state) -> new MotorBlockEntity(type, pos, state, variant);
     }
 
     @Override
@@ -235,24 +230,22 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
         if (level.getBlockState(getBlockPos().relative(dir.getOpposite())).getOptionalValue(DirectionalKineticBlock.FACING).orElse(dir.getOpposite()) == dir
                 && level.getBlockEntity(getBlockPos().relative(dir.getOpposite()))
                 instanceof MotorExtensionBlockEntity extension) {
-
-            stressMultiplier = extension.multiplier;
-            extraEnergy = extension.extraBattery;
-
+            stressMultiplier = extension.getMultiplier();
+            extraEnergy = extension.getVariant().getExtraCapacity();
         }
 
-        mut.setMaxCapacity(extraEnergy + maxCapacity);
+        mut.setMaxCapacity(extraEnergy + variant.getMaxCapacity());
+        speedBehavior.betweenValidated((int) -variant.getSpeed(), (int) variant.getSpeed());
 
         if (!level.isClientSide()) {
-            int needed = (int) Math.ceil((stressImpact * stressMultiplier
+            int needed = (int) Math.ceil((variant.getStress() * stressMultiplier
                         * NewAgeConfig.getCommon().motorSUMultiplier.get())
                     * NewAgeConfig.getCommon().suToEnergy.get());
-
             e = needsPower == powered ? energy.internalExtract(needed, false) : 0;
             if (e > 0) {
                 actualSpeed = speedBehavior.value;
                 actualStress =
-                        (float) Math.ceil((stressImpact * stressMultiplier
+                        (float) Math.ceil((variant.getStress() * stressMultiplier
                                     * NewAgeConfig.getCommon().motorSUMultiplier.get())
                                 * (e / (float)needed));
             } else {
@@ -274,6 +267,6 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements Bo
 
     @Override
     public WrappedBlockEnergyContainer getEnergyStorage() {
-        return energy == null ? energy = new WrappedBlockEnergyContainer(this, mut = new InsertOnlyResizableEnergyContainer(maxCapacity)) : energy;
+        return energy == null ? energy = new WrappedBlockEnergyContainer(this, mut = new InsertOnlyResizableEnergyContainer(variant.getMaxCapacity())) : energy;
     }
 }
