@@ -54,7 +54,7 @@ public class MotorBlockEntity extends GeneratingKineticBlockEntity implements En
         this.variant = variant;
         getOrCreateNetwork();
         getEnergyStorage();
-        mut.setMaxCapacity(variant.getMaxCapacity());
+        energy.setMaxCapacity(variant.getMaxCapacity());
     }
 
     public static BlockEntityBuilder.BlockEntityFactory<MotorBlockEntity> create(IMotorVariant variant) {

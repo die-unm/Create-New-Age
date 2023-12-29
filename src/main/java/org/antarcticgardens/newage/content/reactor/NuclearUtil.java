@@ -2,7 +2,6 @@ package org.antarcticgardens.newage.content.reactor;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -25,7 +24,6 @@ import org.antarcticgardens.newage.CreateNewAge;
 import org.antarcticgardens.newage.tools.RaycastUtil;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 public class NuclearUtil {
     public static final TagKey<Block> STOPS_RADIATION = BlockTags.create(new ResourceLocation(CreateNewAge.MOD_ID, "stops_radiation"));
@@ -64,6 +62,7 @@ public class NuclearUtil {
                 irradiate(le);
                 break;
             }
+        }
         } catch (Exception ignored) {
 
         }
