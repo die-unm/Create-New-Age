@@ -99,9 +99,9 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Energ
     }
 
     protected void serverTick() {
-        if (network == null) 
+        if (network == null)
             setNetwork(new ElectricalNetwork(this));
-        
+
         if (!connectionsInitialized) {
             updateConnections();
             connectionsInitialized = true;
@@ -126,7 +126,9 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Energ
     }
 
     protected void neighborChanged() {
-        network.updateConsumersAndSources();
+        if (network != null) {
+            network.updateConsumersAndSources();
+        }
     }
 
     private void updateConnections() {
@@ -155,7 +157,7 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Energ
     }
 
     public void connect(ElectricalConnectorBlockEntity entity, WireType wireType) {
-        if (!connectors.containsKey(entity)) 
+        if (!connectors.containsKey(entity))
             connectors.put(entity, wireType);
 
         entity.connectWithoutNetworking(this, wireType);
@@ -168,14 +170,14 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Energ
 
         if (level instanceof ServerLevel serverLevel) {
             network.addNode(entity);
-            
+
             serverLevel.getChunkSource().blockChanged(entity.getBlockPos());
             serverLevel.getChunkSource().blockChanged(getBlockPos());
         }
     }
-    
+
     private void connectWithoutNetworking(ElectricalConnectorBlockEntity entity, WireType wireType) {
-        if (!connectors.containsKey(entity)) 
+        if (!connectors.containsKey(entity))
             connectors.put(entity, wireType);
 
         if (!connectorPositions.containsKey(entity.getBlockPos()))
