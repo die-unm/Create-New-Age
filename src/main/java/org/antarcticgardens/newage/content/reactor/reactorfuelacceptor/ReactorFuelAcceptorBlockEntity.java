@@ -103,13 +103,13 @@ public class ReactorFuelAcceptorBlockEntity extends RodFindingReactorBlockEntity
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        tag.put("contents", container.createTag());
+        container.fromTag(tag.getList("contents", 10));
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        container.fromTag(tag.getList("contents", 10));
+        tag.put("contents", container.createTag());
     }
 
     int ticks = 0;
