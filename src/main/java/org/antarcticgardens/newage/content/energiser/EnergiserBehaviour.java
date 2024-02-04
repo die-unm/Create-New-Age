@@ -5,8 +5,8 @@ import com.simibubi.create.content.kinetics.belt.behaviour.BeltProcessingBehavio
 import com.simibubi.create.content.kinetics.belt.behaviour.TransportedItemStackHandlerBehaviour;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
+import earth.terrarium.botarium.api.energy.EnergyHooks;
 import earth.terrarium.botarium.api.energy.PlatformItemEnergyManager;
-import earth.terrarium.botarium.common.energy.util.EnergyHooks;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
