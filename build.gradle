@@ -28,7 +28,7 @@ repositories {
 		url = "https://maven.resourcefulbees.com/repository/maven-public/"
 	}
 	flatDir {
-		dirs "../libs"
+		dirs "libs"
 	}
 }
 
