@@ -45,7 +45,7 @@ public class CreateNewAge implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Hello 1.20.1 Create!");
+		LOGGER.info("Hello 1.19.2 Create!");
 
 		registerCreativeTab();
 
