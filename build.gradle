@@ -27,6 +27,9 @@ repositories {
 		name = "Resourceful Bees Maven"
 		url = "https://maven.resourcefulbees.com/repository/maven-public/"
 	}
+	flatDir {
+		dirs "../libs"
+	}
 }
 
 loom {
@@ -50,7 +53,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	// Oh great create
-	modImplementation("com.simibubi.create:create-fabric-${minecraft_version}:${create_version}")
+	modImplementation name: "create-fabric-0.5.1-c-build.1160+mc1.19.2"
 
 	// Botarium for energy API
 	modImplementation "earth.terrarium:botarium-common-${minecraft_version}:${botarium_version}"
